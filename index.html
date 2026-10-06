@@ -1,0 +1,641 @@
+<!-- BUILT 2026-10-05 for Eric to review, then send back and forth to Kamysha (Bowl of Soul).
+     Real dishes/prices/descriptions read from https://eatbowlofsoul.com/bos-menu-data/ (page 62,
+     WP REST, modified 2026-10-03T03:19:43) — the data store her own site treats as the source of
+     truth (the home page's pre-JS template markup shows a stale "Smothered Chicken Bowl" that is
+     NOT in that real data and is NOT used here).
+     Background photos, logo and dish photos are her own site's real, public images (hot-linked to
+     eatbowlofsoul.com — nothing copied or re-hosted).
+     CANDIDATE — nothing live, nothing sent to Kamysha, nothing on her site. Opens from disk, no
+     server, no build step. See BUILD-NOTES.md in this run's folder for the full measurement log.
+     r3 2026-10-05 22:5x (Eric: "fix those first", before anything goes to her): an EMPTY order shows
+     no PAY button; dishes her menu data flags SOLDOUT (as of 2026-10-03) are shown on meal prep but
+     cannot be added, with a demo switch in the mockbar to treat them as available; typed text is
+     escaped before it is shown back; clamped number fields are written back on change.
+     r4 2026-10-06 08:4x (KAMYSHA'S OWN FEEDBACK, by text to Eric): (1) she lists the meals HERSELF —
+     a "Kamysha's side" box at the top of meal prep where she types this week's meals one per line
+     (name | price | tags | description) and saves; customers pick from whatever she posted;
+     (2) her meals split into SPECIALS and the rest, plus a CUSTOM MEALS section the customer switches
+     on and describes — priced by Kamysha and confirmed before any charge, so an order with custom
+     meals asks her for a price instead of paying on the spot; (3) catering is priced by HEAD COUNT,
+     from $20 a person and up — the per-dish/per-person switch and the rate box are gone.
+     In her box, her four signature bowls and Hamburger Steak n' Gravy (added in her Kitchen Office
+     2026-09-13) are real; the other meals are EXAMPLES marked as such, for her to replace. -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bowl of Soul — Meal Prep &amp; Catering (mockup for Eric)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{--gold:#E8A413;--gold-soft:#F2B705;--ink:#0E0C09;--ink2:#14110C;--cream:#F4EBDA;--paper:#EFE6D3;--paper2:#E9DEC8;--mut:#B9AE97;--mut2:#6B6252}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--ink);color:var(--cream);font-family:'Segoe UI',Arial,sans-serif;line-height:1.6;-webkit-text-size-adjust:100%}
+  img{max-width:100%;display:block}
+  h1,h2,h3,h4{font-family:'Playfair Display',Georgia,serif}
+  .wrap{max-width:720px;margin:0 auto;padding:0 20px}
+  .bt{display:inline-block;padding:14px 24px;font-size:.8rem;font-weight:700;letter-spacing:1.5px;cursor:pointer;border:1.5px solid var(--gold);border-radius:3px;text-align:center;text-decoration:none}
+  .bt.fill{background:var(--gold);color:var(--ink)}
+  .bt.fill:hover{background:var(--gold-soft)}
+  .bt.line{color:var(--cream);background:transparent}
+  .bt.line:hover{color:var(--gold)}
+
+  /* non-dismissible mockup notice */
+  .mockbar{position:sticky;top:0;z-index:50;background:var(--ink2);color:var(--gold);border-bottom:1.5px solid var(--gold);padding:10px 16px;font-size:.76rem;font-weight:600;text-align:center}
+  .mockbar b{color:var(--cream)}
+  .mockbar label{display:inline-flex;align-items:center;gap:6px;margin-left:14px;font-weight:600;color:var(--cream);cursor:pointer}
+
+  .cm-head{padding:18px 20px;display:flex;align-items:center;gap:14px}
+  .cm-head img{height:44px;width:auto}
+  .cm-head .tt{font-size:1.05rem;font-weight:800}
+  .cm-head .tt small{display:block;font-family:'Segoe UI',Arial,sans-serif;font-size:.68rem;letter-spacing:2px;color:var(--mut);font-weight:700;margin-top:3px}
+
+  /* hero bands — same treatment as her catering CTA: full-bleed photo, blurred+dimmed, words over it */
+  .cm-hero{position:relative;overflow:hidden;min-height:400px;display:flex;align-items:flex-end;scroll-margin-top:42px}
+  .cm-hero .bg{position:absolute;inset:0}
+  .cm-hero .bg img{width:100%;height:100%;object-fit:cover;filter:blur(2.5px) brightness(.48);transform:scale(1.07)}
+  .cm-hero .in{position:relative;z-index:2;padding:44px 20px 38px;width:100%;max-width:720px;margin:0 auto}
+  .cm-hero h1,.cm-hero h2{font-size:2.2rem;line-height:1.12;color:var(--cream);font-weight:800;text-shadow:0 2px 14px rgba(0,0,0,.9)}
+  .cm-hero h1 .g,.cm-hero h2 .g{color:var(--gold);display:block}
+  .cm-hero p{color:var(--cream);max-width:460px;margin-top:14px;text-shadow:0 1px 10px rgba(0,0,0,.9);font-size:.98rem}
+  .cm-hero .ctas{margin-top:22px;display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  .cm-hero .jump{color:var(--cream);font-size:.82rem;text-decoration:underline;text-shadow:0 1px 8px rgba(0,0,0,.9)}
+
+  /* form panels — paper, like her menu section */
+  .cm-form{background:var(--paper);color:#1A150D;scroll-margin-top:42px}
+  .cm-form .in{padding:38px 20px 52px}
+  .cm-form h3{font-size:1.5rem;margin-bottom:4px}
+  .cm-form .lead{color:#4A4232;font-size:.9rem;margin-bottom:22px}
+  .fld{margin-bottom:17px}
+  .fld label{display:block;font-size:.74rem;letter-spacing:1px;font-weight:700;color:#6B5A2E;text-transform:uppercase;margin-bottom:6px}
+  .fld input[type=date],.fld input[type=number],.fld input[type=text],.fld input[type=email],.fld input[type=tel],.fld select,.fld textarea{
+    width:100%;background:#fff;border:1.5px solid #C9BCA0;border-radius:4px;padding:11px 12px;font:inherit;font-size:.95rem;color:#1A150D}
+  .fld textarea{resize:vertical;min-height:66px}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+  @media(max-width:480px){.row3{grid-template-columns:1fr}}
+  .fromnote{font-size:.86rem;color:#4A4232;margin:-6px 0 18px}
+  .fromnote b{color:#8A5E07}
+
+  .seg{display:inline-flex;border:1.5px solid #B07E0A;border-radius:5px;overflow:hidden}
+  .seg button{background:#fff;color:#6B5A2E;border:none;padding:10px 15px;font-size:.8rem;font-weight:700;cursor:pointer;letter-spacing:.3px}
+  .seg button[aria-pressed=true]{background:var(--gold);color:var(--ink)}
+  .seg button:not(:last-child){border-right:1.5px solid #B07E0A}
+
+  .fld label.switch{position:relative;display:inline-flex;align-items:center;gap:10px;cursor:pointer;font-size:.86rem;font-weight:600;color:#3A3222;text-transform:none;letter-spacing:0}
+  .switch input{position:absolute;opacity:0;width:1px;height:1px}
+  .switch .sl{width:42px;height:24px;background:#D9CCA8;border-radius:999px;position:relative;transition:background .15s;flex:none}
+  .switch .sl:before{content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;background:#fff;border-radius:50%;transition:left .15s;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+  .switch input:checked + .sl{background:var(--gold)}
+  .switch input:checked + .sl:before{left:20px}
+  .switch input:focus-visible + .sl{outline:2px solid #B07E0A;outline-offset:2px}
+  .switches{display:flex;gap:18px;flex-wrap:wrap;margin-top:4px}
+
+  /* r4: Kamysha's own box — what SHE types, customers never see it */
+  .owner{background:#1F1A12;color:var(--cream);border:1.5px dashed var(--gold);border-radius:8px;padding:16px;margin-bottom:28px}
+  .owner-h{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+  .owner-tag{display:inline-block;background:var(--gold);color:var(--ink);font-size:.66rem;font-weight:800;letter-spacing:1px;padding:4px 10px;border-radius:999px}
+  .owner-toggle{background:transparent;border:1px solid var(--gold);color:var(--gold);border-radius:3px;padding:4px 10px;font-size:.72rem;font-weight:700;cursor:pointer}
+  .owner-p{font-size:.84rem;color:var(--mut);margin:10px 0 10px}
+  .owner-p b{color:var(--cream)}
+  .owner textarea{width:100%;background:#fff;color:#1A150D;border:1.5px solid #C9BCA0;border-radius:4px;padding:10px;font:13px/1.45 Consolas,'Courier New',monospace;resize:vertical}
+  .owner-r{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:10px}
+  .owner-msg{font-size:.82rem;color:var(--gold);font-weight:600}
+  .owner.hidden .owner-p,.owner.hidden textarea,.owner.hidden .owner-r{display:none}
+
+  .dpick-list{display:grid;gap:12px;margin:16px 0}
+  @media(min-width:680px){.dpick-list{grid-template-columns:1fr 1fr}}
+  .dpick-sec{grid-column:1/-1;font-size:.72rem;letter-spacing:2px;text-transform:uppercase;color:#8A5E07;font-weight:800;margin-top:8px}
+  .dpick-item{display:flex;gap:12px;align-items:flex-start;background:#fff;border:1px solid #DDD1B2;border-radius:8px;padding:12px}
+  .dpick-item.custom{grid-column:1/-1;border-color:var(--gold);background:#fffaf0}
+  .dpick-item.custom textarea{width:100%;margin-top:8px;min-height:62px;border:1.5px solid #C9BCA0;border-radius:4px;padding:8px 10px;font:inherit;font-size:.9rem;color:#1A150D;resize:vertical}
+  .dpick-ph{width:56px;height:56px;border-radius:50%;object-fit:cover;flex:none;border:2px solid var(--gold)}
+  .dpick-ph.none{display:flex;align-items:center;justify-content:center;background:var(--paper2);font-size:1.3rem}
+  .dpick-bd{flex:1;min-width:0}
+  .dpick-r{display:flex;justify-content:space-between;gap:8px;align-items:baseline;flex-wrap:wrap}
+  .dpick-r h4{font-size:1rem;font-weight:800}
+  .dpick-p{font-weight:800;color:#8A5E07;font-size:.98rem;white-space:nowrap}
+  .dpick-d{color:#4A4232;font-size:.83rem;margin-top:4px}
+  .vegtag{display:inline-block;border:1px solid #3F7D3B;color:#3F7D3B;font-size:.6rem;font-weight:800;letter-spacing:.5px;padding:1px 6px;border-radius:999px;margin-left:6px;vertical-align:middle}
+  .sptag{display:inline-block;background:var(--gold);color:var(--ink);font-size:.6rem;font-weight:800;letter-spacing:.5px;padding:1px 6px;border-radius:999px;margin-left:6px;vertical-align:middle}
+  .qty{display:flex;align-items:center;gap:8px;margin-top:10px}
+  .qty button{width:28px;height:28px;border-radius:4px;border:1.5px solid var(--gold);background:#fff;color:#8A5E07;font-size:1.05rem;font-weight:700;cursor:pointer;line-height:1}
+  .qty button:active{background:var(--gold);color:#fff}
+  .qty .qn{min-width:18px;text-align:center;font-weight:700}
+  .qty button[disabled]{opacity:.3;cursor:not-allowed}
+  .dpick-item.so{opacity:.6}
+  .sotag{display:inline-block;border:1px solid #A0541A;color:#A0541A;font-size:.6rem;font-weight:800;letter-spacing:.5px;padding:1px 6px;border-radius:999px;margin-left:6px;vertical-align:middle}
+  .pick{display:inline-flex;align-items:center;gap:8px;margin-top:10px;font-size:.86rem;font-weight:700;color:#6B5A2E;cursor:pointer}
+  .pick input{width:18px;height:18px;accent-color:#E8A413;cursor:pointer}
+
+  .tally{margin-top:2px;font-size:.84rem;color:#4A4232}
+  .tally.ok{color:#2E6A2B;font-weight:700}
+  .tally.off{color:#A0541A;font-weight:700}
+
+  .totalbar{margin-top:20px;padding:16px;background:#fff;border:1.5px solid #C9BCA0;border-radius:8px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+  .totalbar .lbl{font-size:.8rem;color:#6B5A2E;font-weight:700;letter-spacing:.3px}
+  .totalbar .amt{font-size:1.6rem;font-weight:800;color:#14100A}
+
+  .inv-request{margin-top:18px}
+  .inv-wrap{margin-top:18px}
+  .inv{border:1.5px dashed #B07E0A;border-radius:8px;padding:18px;background:#fffaf0}
+  .inv-head{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+  .inv-head img{height:38px}
+  .inv-head .biz{font-weight:800;font-size:1.05rem}
+  .inv-tag{display:inline-block;background:#F2E6C8;color:#8A5E07;font-size:.66rem;font-weight:800;letter-spacing:1px;padding:3px 9px;border-radius:999px;margin-bottom:10px}
+  .inv-meta{font-size:.84rem;color:#4A4232;margin-bottom:10px}
+  .inv-line{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px dashed #DDD1B2;font-size:.88rem}
+  .inv-line.soft{border-bottom:none;color:#6B5A2E;font-size:.8rem}
+  .inv-line.sub,.inv-line.dep,.inv-line.tot{font-weight:700}
+  .inv-line.tot{font-size:1.08rem;color:#14100A;border-bottom:none;border-top:1.5px solid #B07E0A;margin-top:6px;padding-top:12px}
+  .inv-note{font-size:.74rem;color:#8A5E07;margin-top:12px;font-style:italic}
+
+  footer.cm-foot{background:#0A0806;color:#8A7F63;padding:26px 20px;text-align:center;font-size:.78rem}
+  footer.cm-foot b{color:var(--mut)}
+</style>
+</head>
+<body>
+
+<div class="mockbar">MOCKUP — <b>not Kamysha's live site.</b> Nothing here is sent or saved anywhere. Built 2026-10-05, revised 2026-10-06 from Kamysha's notes. <label><input type="checkbox" id="demo-avail"> demo: treat sold-out meals as available</label></div>
+
+<div class="cm-head">
+  <img src="https://eatbowlofsoul.com/wp-content/uploads/2026/09/logo-badge.png" alt="Bowl of Soul">
+  <div class="tt">Bowl of Soul<small>MEAL PREP &amp; CATERING — MOCKUP</small></div>
+</div>
+
+<!-- ============ MEAL PREP (top) ============ -->
+<div class="cm-hero" id="mealprep">
+  <div class="bg"><img src="https://eatbowlofsoul.com/wp-content/uploads/2026/09/kamysha-cooking.jpg" alt=""></div>
+  <div class="in">
+    <h1>Meal prep, <span class="g">made with soul.</span></h1>
+    <p>Kamysha posts this week's meals. Pick the ones you want — her specials, or custom meals made your way — buy now, and they're ready every week or just once.</p>
+    <div class="ctas">
+      <a class="bt fill" href="#mealprep-form">BUILD YOUR MEALS</a>
+      <a class="jump" href="#catering">Planning an event? Catering ↓</a>
+    </div>
+  </div>
+</div>
+
+<section class="cm-form" id="mealprep-form">
+  <div class="wrap in">
+
+    <div class="owner" id="owner-box">
+      <div class="owner-h"><span class="owner-tag">KAMYSHA'S SIDE — customers never see this box</span><button type="button" class="owner-toggle" id="owner-toggle" aria-expanded="true">hide</button></div>
+      <p class="owner-p">Type this week's meals, one per line — <b>name | price | tags | description</b>. Tags: <b>special</b> (your featured meals), <b>vegan</b>, <b>sold out</b>. Press save and the customer list below updates. On your real site this is a tab in your Kitchen Office. Your four signature bowls and Hamburger Steak n' Gravy are real; the rest are examples for you to replace.</p>
+      <textarea id="owner-meals" rows="17" spellcheck="false"># This week's meals - one per line: name | price | tags | description
+# Tags: special, vegan, sold out. Lines starting with # are ignored.
+Oxtail Bowl | 28 | special, sold out | Slow-braised Jamaican oxtails, rich gravy, served over seasoned rice n' peas, baked mac and Cheese, greens and dressing.
+Meat Loaf Bowl | 20 | special | Turkey-based meat loaf, made from scratch. Baked mac and Cheese, greens and dressing.
+Stuffed Salmon | 23 | special | Stuffed salmon with turkey bacon, green onion and savory cream cheese
+The Sampler Soul (Vegan) | 25 | special, vegan | 100% Vegan sampler includes; Ribless Tips, Sweat Heat Chikn, and phish w/ a side of Mac n cheeze &amp; greens.
+Hamburger Steak n' Gravy | 20 | | (example description - replace with your own)
+Smothered Chicken Bowl | 18 | | (example meal - replace with your own)
+Jerk Chicken Bowl | 19 | | (example meal - replace with your own)
+Shrimp &amp; Grits | 22 | special | (example meal - replace with your own)
+Fried Catfish Plate | 21 | | (example meal - replace with your own)
+Turkey Wings &amp; Rice | 19 | | (example meal - replace with your own)
+Ribless Tips Bowl (Vegan) | 21 | vegan | (example meal - replace with your own)
+Red Beans &amp; Rice with Smoked Sausage | 17 | | (example meal - replace with your own)
+Baked Chicken &amp; Greens Bowl | 18 | | (example meal - replace with your own)
+Garden Soul Salad (Vegan) | 15 | vegan | (example meal - replace with your own)</textarea>
+      <div class="owner-r"><button type="button" class="bt fill" id="owner-save">SAVE THIS WEEK'S MEALS</button><span class="owner-msg" id="owner-msg"></span></div>
+    </div>
+
+    <h3>Order meal prep</h3>
+    <p class="lead">Say how many meals you want, then pick them from what Kamysha posted this week — her specials and the rest of her list — or switch on custom meals and tell her what you'd like. Then buy now.</p>
+
+    <div class="row2">
+      <div class="fld">
+        <label>How often</label><br>
+        <div class="seg" role="group" aria-label="How often" data-key="mealprep" data-field="freq">
+          <button type="button" data-value="weekly" aria-pressed="true">Per Week</button>
+          <button type="button" data-value="onetime" aria-pressed="false">One-Time</button>
+        </div>
+      </div>
+      <div class="fld">
+        <label for="mealprep-target">How many meals</label>
+        <input type="number" id="mealprep-target" min="0" value="7">
+      </div>
+    </div>
+
+    <div class="fld">
+      <label>Hot or cold</label><br>
+      <div class="seg" role="group" aria-label="Hot or cold" data-key="mealprep" data-field="hotcold">
+        <button type="button" data-value="hot" aria-pressed="true">Hot Meals</button>
+        <button type="button" data-value="cold" aria-pressed="false">Cold Meals</button>
+      </div>
+    </div>
+
+    <div class="fld">
+      <label>What goes in your order</label>
+      <div class="switches">
+        <label class="switch"><input type="checkbox" id="mealprep-fromlist" checked><span class="sl"></span> Kamysha's specials &amp; this week's meals</label>
+        <label class="switch"><input type="checkbox" id="mealprep-custom-on"><span class="sl"></span> Custom meals — you tell her what you want</label>
+      </div>
+    </div>
+
+    <div class="fld">
+      <label class="switch"><input type="checkbox" id="mealprep-vegan"><span class="sl"></span> Vegan options only</label>
+    </div>
+
+    <div id="mealprep-list" class="dpick-list"></div>
+    <p class="tally" id="mealprep-tally"></p>
+
+    <div class="totalbar">
+      <span class="lbl" id="mealprep-total-lbl"></span>
+      <span class="amt" id="mealprep-total-amt"></span>
+    </div>
+
+    <button type="button" class="bt fill inv-request" data-key="mealprep">BUY NOW</button>
+
+    <div class="inv-wrap" id="mealprep-invoice-wrap" hidden>
+      <div class="row3" style="margin-bottom:4px">
+        <div class="fld"><label for="mealprep-name">Name</label><input type="text" id="mealprep-name"></div>
+        <div class="fld"><label for="mealprep-email">Email</label><input type="email" id="mealprep-email"></div>
+        <div class="fld"><label for="mealprep-phone">Phone</label><input type="tel" id="mealprep-phone"></div>
+      </div>
+      <div class="inv" id="mealprep-invoice"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CATERING (below) ============ -->
+<div class="cm-hero" id="catering">
+  <div class="bg"><img src="https://eatbowlofsoul.com/wp-content/uploads/2026/09/kamysha-event.jpg" alt=""></div>
+  <div class="in">
+    <h2>We also cater. <span class="g">Bring the soul to your table.</span></h2>
+    <p>From office lunches to family celebrations — flavor, heart and Southern hospitality for your next gathering. From $20 a person.</p>
+    <div class="ctas">
+      <a class="bt fill" href="#catering-form">PLAN YOUR EVENT</a>
+    </div>
+  </div>
+</div>
+
+<section class="cm-form" id="catering-form">
+  <div class="wrap in">
+    <h3>Request catering</h3>
+    <p class="lead">Tell us about your event, how many people, and what you'd like served. Kamysha sends you a branded invoice to confirm.</p>
+
+    <div class="row2">
+      <div class="fld">
+        <label for="catering-date">Event date</label>
+        <input type="date" id="catering-date" min="2026-10-06">
+      </div>
+      <div class="fld">
+        <label for="catering-people">Number of people</label>
+        <input type="number" id="catering-people" min="1" value="10">
+      </div>
+    </div>
+    <p class="fromnote">Starts at <b>$20 per person</b> and can go up with the menu you choose — Kamysha confirms the final price on your invoice.</p>
+
+    <div class="fld">
+      <label for="catering-type">Type of event</label>
+      <select id="catering-type">
+        <option>Office lunch</option>
+        <option>Family celebration</option>
+        <option>Birthday</option>
+        <option>Wedding / shower</option>
+        <option>Holiday gathering</option>
+        <option>Other</option>
+      </select>
+    </div>
+
+    <div class="fld">
+      <label class="switch"><input type="checkbox" id="catering-vegan"><span class="sl"></span> Vegan options only</label>
+    </div>
+
+    <div id="catering-list" class="dpick-list"></div>
+
+    <div class="fld">
+      <label for="catering-notes">Custom requests, dietary notes — anything not on the list</label>
+      <textarea id="catering-notes" placeholder="Allergies, substitutions, a dish you'd like that isn't listed, anything we should know"></textarea>
+    </div>
+
+    <div class="totalbar">
+      <span class="lbl" id="catering-total-lbl"></span>
+      <span class="amt" id="catering-total-amt"></span>
+    </div>
+
+    <button type="button" class="bt fill inv-request" data-key="catering">REQUEST AN INVOICE</button>
+
+    <div class="inv-wrap" id="catering-invoice-wrap" hidden>
+      <div class="row3" style="margin-bottom:4px">
+        <div class="fld"><label for="catering-name">Name</label><input type="text" id="catering-name"></div>
+        <div class="fld"><label for="catering-email">Email</label><input type="email" id="catering-email"></div>
+        <div class="fld"><label for="catering-phone">Phone</label><input type="tel" id="catering-phone"></div>
+      </div>
+      <div class="inv" id="catering-invoice"></div>
+    </div>
+  </div>
+</section>
+
+<footer class="cm-foot">
+  This is a <b>mockup</b> built 2026-10-05 and revised 2026-10-06 for Eric to review and send to Kamysha — it is not connected
+  to the Bowl of Soul website, store or payment system. Nothing on this page has been sent anywhere.
+</footer>
+
+<script>
+/* Catering menu: real dishes, verbatim from https://eatbowlofsoul.com/bos-menu-data/ (page 62, WP REST,
+   modified 2026-10-03T03:19:43). Photos: only the two dishes that carry a PHOTO field in that data get a
+   photo here — matches what her own live site actually shows (confirmed by render). */
+const CATERING_FROM = 20;   /* r4: Kamysha - "it starts at $20 a person but can go up" */
+const AVAIL_AS_OF = "2026-10-03";
+const DISHES = [
+  {id:"oxtail",  name:"Oxtail Bowl", price:28, section:"Signature Bowls", vegan:false, soldout:true,
+   desc:"Slow-braised Jamaican oxtails, rich gravy, served over seasoned rice n' peas, baked mac and Cheese, greens and dressing.",
+   photo:"https://eatbowlofsoul.com/wp-content/uploads/2026/09/oxtail-bowl-1788501284520.jpg"},
+  {id:"sampler", name:"The Sampler Soul (Vegan)", price:25, section:"Signature Bowls", vegan:true, soldout:true,
+   desc:"100% Vegan sampler includes; Ribless Tips, Sweat Heat Chikn, and phish w/ a side of Mac n cheeze & greens.",
+   photo:null},
+  {id:"salmon",  name:"Stuffed Salmon", price:23, section:"Signature Bowls", vegan:false, soldout:true,
+   desc:"Stuffed salmon with turkey bacon, green onion and savory cream cheese",
+   photo:null},
+  {id:"meatloaf",name:"Meat Loaf Bowl", price:20, section:"Signature Bowls", vegan:false, soldout:true,
+   desc:"Turkey-based meat loaf, made from scratch. Baked mac and Cheese, greens and dressing.",
+   photo:"https://eatbowlofsoul.com/wp-content/uploads/2026/09/meat-loaf-bowl-1788812806962.jpg"},
+  {id:"pudding", name:"Banana Pudding", price:7, section:"Desserts", vegan:false, soldout:true,
+   desc:"Classic, creamy and made with love.", photo:null},
+  {id:"pie",     name:"Mini Sweet Potato Pie", price:5, section:"Desserts", vegan:false, soldout:false,
+   desc:"A personal-size take on the Southern staple.", photo:null}
+];
+/* r4: the MEAL PREP list is whatever Kamysha typed in her box — parsed on load and on every save. */
+let MEALS = [];
+let demoAvail = false;
+const soldOutHere = (key, d) => key === "mealprep" && d.soldout && !demoAvail;
+const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const LOGO_IMG = '<img src="https://eatbowlofsoul.com/wp-content/uploads/2026/09/logo-badge.png" alt="Bowl of Soul">';
+
+const state = {
+  catering: {date:"", people:10, type:"Office lunch", veganOnly:false, notes:"", qty:{}, invoiceOpen:false, name:"", email:"", phone:""},
+  mealprep: {freq:"weekly", target:7, hotcold:"hot", veganOnly:false, fromList:true, custom:false, customText:"", qty:{}, invoiceOpen:false, name:"", email:"", phone:""}
+};
+
+const fmt = n => "$" + (Math.round(n*100)/100).toFixed(2);
+const itemsFor = key => key === "catering" ? DISHES : MEALS;
+const listQty = key => itemsFor(key).reduce((s,d)=> s + (state[key].qty[d.id]||0), 0);
+const customQty = () => state.mealprep.custom ? (state.mealprep.qty.custom||0) : 0;
+const dishSubtotal = key => itemsFor(key).reduce((s,d)=> s + (state[key].qty[d.id]||0) * d.price, 0);
+
+/* name | price | tags | description — blank lines and # lines are skipped; a price is the digits in field 2 */
+function parseMeals(text){
+  const out = []; let n = 0;
+  String(text).split(/\r?\n/).forEach(line=>{
+    line = line.trim();
+    if(!line || line.startsWith("#")) return;
+    const f = line.split("|").map(s => s.trim());
+    if(!f[0]) return;
+    n += 1;
+    const tags = (f[2] || "").toLowerCase();
+    out.push({id:"m"+n, name:f[0], price:Math.max(0, parseFloat(String(f[1]||"").replace(/[^0-9.]/g,"")) || 0),
+              special:/special/.test(tags), vegan:/vegan/.test(tags), soldout:/sold/.test(tags), desc:f[3] || ""});
+  });
+  return out;
+}
+
+function dishPhotoHTML(d){
+  return d.photo ? `<img class="dpick-ph" src="${d.photo}" alt="${esc(d.name)}">`
+                 : `<div class="dpick-ph none" aria-hidden="true">🍲</div>`;
+}
+const secHTML = t => `<div class="dpick-sec">${t}</div>`;
+
+function itemHTML(key, d){
+  const st = state[key];
+  const q = st.qty[d.id] || 0;
+  const so = soldOutHere(key, d);
+  const tags = (d.special ? '<span class="sptag">SPECIAL</span>' : "") + (d.vegan ? '<span class="vegtag">VEGAN</span>' : "") + (so ? '<span class="sotag">SOLD OUT THIS WEEK</span>' : "");
+  if(key === "catering"){
+    return `<div class="dpick-item">${dishPhotoHTML(d)}<div class="dpick-bd">
+      <div class="dpick-r"><h4>${esc(d.name)}${tags}</h4></div>
+      <p class="dpick-d">${esc(d.desc)}</p>
+      <label class="pick"><input type="checkbox" data-pick="${d.id}"${q ? " checked" : ""}> Serve this</label>
+    </div></div>`;
+  }
+  return `<div class="dpick-item${so ? " so" : ""}">${dishPhotoHTML(d)}<div class="dpick-bd">
+      <div class="dpick-r"><h4>${esc(d.name)}${tags}</h4><span class="dpick-p">${fmt(d.price)}</span></div>
+      ${d.desc ? `<p class="dpick-d">${esc(d.desc)}</p>` : ""}
+      <div class="qty" data-key="${key}" data-id="${d.id}">
+        <button type="button" class="qm" aria-label="Fewer ${esc(d.name)}"${so ? " disabled" : ""}>−</button>
+        <span class="qn">${q}</span>
+        <button type="button" class="qp" aria-label="More ${esc(d.name)}"${so ? " disabled" : ""}>+</button>
+      </div>
+    </div></div>`;
+}
+
+function customHTML(){
+  const st = state.mealprep, q = st.qty.custom || 0;
+  return `<div class="dpick-item custom"><div class="dpick-ph none" aria-hidden="true">✍️</div>
+    <div class="dpick-bd">
+      <div class="dpick-r"><h4>Custom meal</h4><span class="dpick-p">priced by Kamysha</span></div>
+      <p class="dpick-d">Say what you want — protein, sides, how it's cooked, what to leave out. Kamysha confirms the price with you before anything is charged.</p>
+      <textarea id="mealprep-custom" placeholder="e.g. baked chicken, extra greens, no mac, low salt">${esc(st.customText)}</textarea>
+      <div class="qty" data-key="mealprep" data-id="custom">
+        <button type="button" class="qm" aria-label="Fewer custom meals">−</button>
+        <span class="qn">${q}</span>
+        <button type="button" class="qp" aria-label="More custom meals">+</button>
+      </div>
+    </div></div>`;
+}
+
+function renderPicker(key){
+  const st = state[key];
+  const list = document.getElementById(key+"-list");
+  let html = "";
+  if(key === "catering"){
+    let last = null;
+    DISHES.filter(d => !st.veganOnly || d.vegan).forEach(d=>{
+      if(d.section !== last){ html += secHTML(d.section); last = d.section; }
+      html += itemHTML(key, d);
+    });
+    list.innerHTML = html || `<p class="tally">No vegan dishes match yet — turn off Vegan options only to see the full menu.</p>`;
+    return;
+  }
+  if(st.fromList){
+    const vis = MEALS.filter(d => !st.veganOnly || d.vegan);
+    const specials = vis.filter(d => d.special), rest = vis.filter(d => !d.special);
+    if(specials.length){ html += secHTML("Kamysha's specials"); specials.forEach(d => html += itemHTML(key, d)); }
+    if(rest.length){ html += secHTML("This week's meals"); rest.forEach(d => html += itemHTML(key, d)); }
+    if(!vis.length) html += MEALS.length
+      ? `<p class="tally">No vegan meals on this week's list — turn off Vegan options only to see them all.</p>`
+      : `<p class="tally">Kamysha hasn't posted this week's meals yet.</p>`;
+  }
+  if(st.custom) html += secHTML("Custom meals — made your way") + customHTML();
+  list.innerHTML = html || `<p class="tally">Switch on Kamysha's list or custom meals above to start picking.</p>`;
+}
+
+function invoiceHTML(key){
+  const st = state[key];
+  const buy = key === "mealprep";
+  let lines = "", total, totalTxt;
+  if(!buy){
+    total = st.people * CATERING_FROM; totalTxt = "from " + fmt(total);
+    lines += `<div class="inv-line"><span>Catering — ${st.people} guest${st.people===1?"":"s"} × from ${fmt(CATERING_FROM)}/person</span><span>${totalTxt}</span></div>`;
+    const picks = DISHES.filter(d => (st.qty[d.id]||0) > 0).map(d => esc(d.name)).join(", ");
+    if(picks) lines += `<div class="inv-line soft"><span>Menu: ${picks}</span><span></span></div>`;
+    if(st.notes.trim()) lines += `<div class="inv-line soft"><span>Requests: ${esc(st.notes.trim())}</span><span></span></div>`;
+  } else {
+    total = dishSubtotal(key); totalTxt = fmt(total);
+    MEALS.forEach(d=>{
+      const q = st.qty[d.id]||0;
+      if(q>0) lines += `<div class="inv-line"><span>${q} × ${esc(d.name)}</span><span>${fmt(q*d.price)}</span></div>`;
+    });
+    const cq = customQty();
+    if(cq>0) lines += `<div class="inv-line"><span>${cq} × Custom meal${cq===1?"":"s"}${st.customText.trim() ? " — “" + esc(st.customText.trim()) + "”" : ""}</span><span>quoted by Kamysha</span></div>`;
+    if(!lines) lines = `<div class="inv-line"><span>No meals selected yet</span><span>${fmt(0)}</span></div>`;
+  }
+  const who = [st.name, st.email, st.phone].filter(Boolean).map(esc).join(" · ");
+  const meta = buy
+    ? `${st.freq==="weekly" ? "Weekly meal prep" : "One-time meal prep"} · ${st.hotcold==="hot" ? "Hot meals" : "Cold meals"}`
+    : `${st.date ? "Event date: "+esc(st.date) : "Event date: (not set)"} · ${esc(st.type)} · ${st.people} guest${st.people===1?"":"s"}`;
+  const cq = buy ? customQty() : 0;
+  let foot;
+  if(!buy){
+    foot = `<div class="inv-line dep"><span>Deposit to book (30%, suggested)</span><span>${fmt(total*0.3)}</span></div>
+    <div class="inv-line tot"><span>Total due</span><span>${totalTxt}</span></div>
+    <p class="inv-note">Preview only — nothing has been sent or charged. Kamysha sends the real invoice, with her branding, once she confirms your menu and the final per-person price — it starts at ${fmt(CATERING_FROM)} and can go up with what you choose.</p>`;
+  } else if(cq > 0){
+    foot = `<button type="button" class="bt fill" style="width:100%;margin-top:10px" onclick="alert('Mockup: on the real site this sends your order to Kamysha; she replies with your price and a pay link. Nothing sent here.')">SEND TO KAMYSHA FOR MY PRICE</button>
+    <p class="inv-note">Custom meals are priced by Kamysha. She confirms your total${total > 0 ? " (" + fmt(total) + " of listed meals plus your custom meals)" : ""}, then you pay — nothing is charged here.</p>`;
+  } else if(total > 0){
+    foot = `<div class="inv-line tot"><span>${st.freq==="weekly" ? "Total per week" : "Total"}</span><span>${fmt(total)}</span></div>
+    <button type="button" class="bt fill" style="width:100%;margin-top:10px" onclick="alert('Mockup: on the real site this goes to checkout and charges the card. Nothing charged here.')">PAY ${fmt(total)} NOW</button>
+    <p class="inv-note">Checkout preview — on her site this charges the card${st.freq==="weekly" ? " and sets up the weekly order" : ""}. Nothing charged here.</p>`;
+  } else {
+    foot = `<div class="inv-line tot"><span>Total</span><span>${fmt(0)}</span></div>
+    <p class="inv-note">Add at least one meal above to check out — there is nothing to pay for yet.</p>`;
+  }
+  return `<div class="inv-head">${LOGO_IMG}<div><div class="biz">Bowl of Soul — Kamysha Black</div><div style="font-size:.7rem;color:#8A5E07">eatbowlofsoul.com</div></div></div>
+    <span class="inv-tag">${buy ? "CHECKOUT PREVIEW — nothing charged" : "ESTIMATE — not a real invoice, nothing sent"}</span>
+    <div class="inv-meta">${meta}${who ? "<br>For: "+who : ""}</div>
+    ${lines}
+    <div class="inv-line sub"><span>Subtotal</span><span>${totalTxt}</span></div>
+    ${foot}`;
+}
+
+function updateCatering(){
+  const st = state.catering;
+  renderPicker("catering");
+  const from = st.people * CATERING_FROM;
+  document.getElementById("catering-total-lbl").textContent = `${st.people} guest${st.people===1?"":"s"} × from ${fmt(CATERING_FROM)}/person`;
+  document.getElementById("catering-total-amt").textContent = "from " + fmt(from);
+  if(st.invoiceOpen) document.getElementById("catering-invoice").innerHTML = invoiceHTML("catering");
+}
+
+function updateMealPrep(){
+  const st = state.mealprep;
+  renderPicker("mealprep");
+  const fromList = listQty("mealprep"), cq = customQty(), picked = fromList + cq;
+  const mix = cq > 0 ? ` (${fromList} from the list + ${cq} custom)` : "";
+  const tallyEl = document.getElementById("mealprep-tally");
+  if(st.target > 0){
+    tallyEl.textContent = `${picked} of ${st.target} meals selected${mix}`;
+    tallyEl.className = "tally " + (picked===st.target ? "ok" : "off");
+  } else {
+    tallyEl.textContent = `${picked} meal${picked===1?"":"s"} selected${mix}`;
+    tallyEl.className = "tally";
+  }
+  const freqLabel = st.freq==="weekly" ? "per week" : "one-time";
+  document.getElementById("mealprep-total-lbl").textContent = `${picked} meal${picked===1?"":"s"}, ${freqLabel}, ${st.hotcold==="hot"?"hot":"cold"}${cq > 0 ? " — custom meals priced by Kamysha" : ""}`;
+  document.getElementById("mealprep-total-amt").textContent = fmt(dishSubtotal("mealprep")) + (cq > 0 ? " +" : "");
+  if(st.invoiceOpen) document.getElementById("mealprep-invoice").innerHTML = invoiceHTML("mealprep");
+}
+
+const refresh = key => key==="catering" ? updateCatering() : updateMealPrep();
+
+document.addEventListener("click", e=>{
+  const qBtn = e.target.closest(".qm,.qp");
+  if(qBtn){
+    const wrap = qBtn.closest(".qty");
+    const key = wrap.dataset.key, id = wrap.dataset.id;
+    const cur = state[key].qty[id] || 0;
+    state[key].qty[id] = qBtn.classList.contains("qm") ? Math.max(0, cur-1) : cur+1;
+    refresh(key);
+    return;
+  }
+  const segBtn = e.target.closest(".seg button");
+  if(segBtn){
+    const group = segBtn.closest(".seg");
+    const key = group.dataset.key, field = group.dataset.field;
+    group.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", b===segBtn ? "true" : "false"));
+    state[key][field] = segBtn.dataset.value;
+    refresh(key);
+    return;
+  }
+  const invBtn = e.target.closest(".inv-request");
+  if(invBtn){
+    const key = invBtn.dataset.key;
+    state[key].invoiceOpen = true;
+    const wrap = document.getElementById(key+"-invoice-wrap");
+    wrap.hidden = false;
+    refresh(key);
+    wrap.scrollIntoView({behavior:"smooth", block:"start"});
+  }
+});
+
+document.addEventListener("input", e=>{
+  const t = e.target, id = t.id;
+  if(t.dataset && t.dataset.pick){ state.catering.qty[t.dataset.pick] = t.checked ? 1 : 0; updateCatering(); return; }
+  if(id==="mealprep-custom"){   /* typing in the custom box never re-renders the list (the box would lose focus) */
+    state.mealprep.customText = t.value;
+    if(state.mealprep.invoiceOpen) document.getElementById("mealprep-invoice").innerHTML = invoiceHTML("mealprep");
+    return;
+  }
+  if(id==="mealprep-fromlist"){ state.mealprep.fromList = t.checked; if(!t.checked) MEALS.forEach(d => { state.mealprep.qty[d.id] = 0; }); updateMealPrep(); return; }
+  if(id==="mealprep-custom-on"){ state.mealprep.custom = t.checked; if(!t.checked) state.mealprep.qty.custom = 0; updateMealPrep(); return; }
+  if(id==="catering-vegan"){ state.catering.veganOnly = t.checked; updateCatering(); return; }
+  if(id==="mealprep-vegan"){ state.mealprep.veganOnly = t.checked; updateMealPrep(); return; }
+  if(id==="demo-avail"){
+    demoAvail = t.checked;
+    if(!demoAvail) MEALS.forEach(d => { if(d.soldout) state.mealprep.qty[d.id] = 0; });   // nothing sold out stays in the basket
+    updateMealPrep(); return;
+  }
+  const map = {
+    "catering-date": ["catering","date", v=>v],
+    "catering-people": ["catering","people", v=>Math.max(1, parseInt(v)||1)],
+    "catering-type": ["catering","type", v=>v],
+    "catering-notes": ["catering","notes", v=>v],
+    "catering-name": ["catering","name", v=>v],
+    "catering-email": ["catering","email", v=>v],
+    "catering-phone": ["catering","phone", v=>v],
+    "mealprep-target": ["mealprep","target", v=>Math.max(0, parseInt(v)||0)],
+    "mealprep-name": ["mealprep","name", v=>v],
+    "mealprep-email": ["mealprep","email", v=>v],
+    "mealprep-phone": ["mealprep","phone", v=>v]
+  };
+  if(map[id]){
+    const [key, field, cast] = map[id];
+    state[key][field] = cast(t.value);
+    refresh(key);
+  }
+});
+
+/* a clamped number is written back into its field when the user leaves it, so "-5" or "0" never
+   sits on screen while the state says 0 or 1. On change, not on input, so typing is never fought. */
+document.addEventListener("change", e=>{
+  const id = e.target.id;
+  if(id==="mealprep-target") e.target.value = state.mealprep.target;
+  if(id==="catering-people") e.target.value = state.catering.people;
+});
+
+/* r4: Kamysha's box — save re-reads her lines; the customer list below is whatever she saved */
+const ownerBox = document.getElementById("owner-box");
+document.getElementById("owner-save").addEventListener("click", ()=>{
+  MEALS = parseMeals(document.getElementById("owner-meals").value);
+  state.mealprep.qty = {custom: state.mealprep.qty.custom || 0};   // the old picks pointed at the old list
+  const so = MEALS.filter(d => d.soldout).length, sp = MEALS.filter(d => d.special).length;
+  document.getElementById("owner-msg").textContent = `Saved — ${MEALS.length} meal${MEALS.length===1?"":"s"} on this week's list (${sp} special${sp===1?"":"s"}, ${so} sold out). Customers see it below.`;
+  updateMealPrep();
+});
+document.getElementById("owner-toggle").addEventListener("click", e=>{
+  const hidden = ownerBox.classList.toggle("hidden");
+  e.target.textContent = hidden ? "show" : "hide";
+  e.target.setAttribute("aria-expanded", String(!hidden));
+});
+
+MEALS = parseMeals(document.getElementById("owner-meals").value);
+updateCatering();
+updateMealPrep();
+</script>
+</body>
+</html>
