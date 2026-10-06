@@ -14,12 +14,17 @@
      r4 2026-10-06 08:4x (KAMYSHA'S OWN FEEDBACK, by text to Eric): (1) she lists the meals HERSELF —
      a "Kamysha's side" box at the top of meal prep where she types this week's meals one per line
      (name | price | tags | description) and saves; customers pick from whatever she posted;
-     (2) her meals split into SPECIALS and the rest, plus a CUSTOM MEALS section the customer switches
-     on and describes — priced by Kamysha and confirmed before any charge, so an order with custom
-     meals asks her for a price instead of paying on the spot; (3) catering is priced by HEAD COUNT,
-     from $20 a person and up — the per-dish/per-person switch and the rate box are gone.
-     In her box, her four signature bowls and Hamburger Steak n' Gravy (added in her Kitchen Office
-     2026-09-13) are real; the other meals are EXAMPLES marked as such, for her to replace. -->
+     (2) her meals split into SPECIALS and the rest; (3) catering is priced by HEAD COUNT, from $20 a
+     person and up — the per-dish/per-person switch and the rate box are gone.
+     r5 2026-10-06 19:5x (ERIC, reading her text again: "custom means a custom EDITABLE meal — add this,
+     leave out that — not a whole meal on its own"): the standalone "custom meal" card is GONE; every
+     meal on her list carries a CUSTOMIZE toggle that opens custom fields — her own pick lists (a 5th
+     field on her line: options, e.g. "sides: mac, greens, rice; spice: mild, hot"), plus Add / Leave
+     out / Notes. The checkout preview shows each customized meal with its changes at the list price,
+     and says Kamysha confirms any price change before charging. The two "what goes in your order"
+     switches are gone (her list is always the menu).
+     In her box, her four signature bowls and Hamburger Steak n' Gravy are real; the other meals are
+     EXAMPLES marked as such, for her to replace. -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -91,7 +96,6 @@
   .switch input:checked + .sl{background:var(--gold)}
   .switch input:checked + .sl:before{left:20px}
   .switch input:focus-visible + .sl{outline:2px solid #B07E0A;outline-offset:2px}
-  .switches{display:flex;gap:18px;flex-wrap:wrap;margin-top:4px}
 
   /* r4: Kamysha's own box — what SHE types, customers never see it */
   .owner{background:#1F1A12;color:var(--cream);border:1.5px dashed var(--gold);border-radius:8px;padding:16px;margin-bottom:28px}
@@ -109,8 +113,7 @@
   @media(min-width:680px){.dpick-list{grid-template-columns:1fr 1fr}}
   .dpick-sec{grid-column:1/-1;font-size:.72rem;letter-spacing:2px;text-transform:uppercase;color:#8A5E07;font-weight:800;margin-top:8px}
   .dpick-item{display:flex;gap:12px;align-items:flex-start;background:#fff;border:1px solid #DDD1B2;border-radius:8px;padding:12px}
-  .dpick-item.custom{grid-column:1/-1;border-color:var(--gold);background:#fffaf0}
-  .dpick-item.custom textarea{width:100%;margin-top:8px;min-height:62px;border:1.5px solid #C9BCA0;border-radius:4px;padding:8px 10px;font:inherit;font-size:.9rem;color:#1A150D;resize:vertical}
+  .dpick-item.cust{border-color:var(--gold);background:#fffaf0}
   .dpick-ph{width:56px;height:56px;border-radius:50%;object-fit:cover;flex:none;border:2px solid var(--gold)}
   .dpick-ph.none{display:flex;align-items:center;justify-content:center;background:var(--paper2);font-size:1.3rem}
   .dpick-bd{flex:1;min-width:0}
@@ -129,6 +132,12 @@
   .sotag{display:inline-block;border:1px solid #A0541A;color:#A0541A;font-size:.6rem;font-weight:800;letter-spacing:.5px;padding:1px 6px;border-radius:999px;margin-left:6px;vertical-align:middle}
   .pick{display:inline-flex;align-items:center;gap:8px;margin-top:10px;font-size:.86rem;font-weight:700;color:#6B5A2E;cursor:pointer}
   .pick input{width:18px;height:18px;accent-color:#E8A413;cursor:pointer}
+  /* r5: the custom fields under a meal */
+  .cfields{margin-top:10px;padding:10px;border:1px dashed #B07E0A;border-radius:6px;background:#fff;display:grid;gap:8px}
+  .cf{display:grid;grid-template-columns:92px 1fr;gap:8px;align-items:center;font-size:.82rem}
+  .cf span{font-weight:700;color:#6B5A2E;text-transform:uppercase;letter-spacing:.5px;font-size:.68rem}
+  .cf input,.cf select{width:100%;background:#fff;border:1.5px solid #C9BCA0;border-radius:4px;padding:7px 9px;font:inherit;font-size:.88rem;color:#1A150D}
+  .cfnote{font-size:.72rem;color:#8A5E07;font-style:italic}
 
   .tally{margin-top:2px;font-size:.84rem;color:#4A4232}
   .tally.ok{color:#2E6A2B;font-weight:700}
@@ -147,7 +156,7 @@
   .inv-tag{display:inline-block;background:#F2E6C8;color:#8A5E07;font-size:.66rem;font-weight:800;letter-spacing:1px;padding:3px 9px;border-radius:999px;margin-bottom:10px}
   .inv-meta{font-size:.84rem;color:#4A4232;margin-bottom:10px}
   .inv-line{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px dashed #DDD1B2;font-size:.88rem}
-  .inv-line.soft{border-bottom:none;color:#6B5A2E;font-size:.8rem}
+  .inv-line.soft{border-bottom:none;color:#6B5A2E;font-size:.8rem;padding-top:0}
   .inv-line.sub,.inv-line.dep,.inv-line.tot{font-weight:700}
   .inv-line.tot{font-size:1.08rem;color:#14100A;border-bottom:none;border-top:1.5px solid #B07E0A;margin-top:6px;padding-top:12px}
   .inv-note{font-size:.74rem;color:#8A5E07;margin-top:12px;font-style:italic}
@@ -170,7 +179,7 @@
   <div class="bg"><img src="https://eatbowlofsoul.com/wp-content/uploads/2026/09/kamysha-cooking.jpg" alt=""></div>
   <div class="in">
     <h1>Meal prep, <span class="g">made with soul.</span></h1>
-    <p>Kamysha posts this week's meals. Pick the ones you want — her specials, or custom meals made your way — buy now, and they're ready every week or just once.</p>
+    <p>Kamysha posts this week's meals. Pick the ones you want, make any of them your way — add this, leave out that, pick your sides — buy now, and they're ready every week or just once.</p>
     <div class="ctas">
       <a class="bt fill" href="#mealprep-form">BUILD YOUR MEALS</a>
       <a class="jump" href="#catering">Planning an event? Catering ↓</a>
@@ -183,28 +192,28 @@
 
     <div class="owner" id="owner-box">
       <div class="owner-h"><span class="owner-tag">KAMYSHA'S SIDE — customers never see this box</span><button type="button" class="owner-toggle" id="owner-toggle" aria-expanded="true">hide</button></div>
-      <p class="owner-p">Type this week's meals, one per line — <b>name | price | tags | description</b>. Tags: <b>special</b> (your featured meals), <b>vegan</b>, <b>sold out</b>. Press save and the customer list below updates. On your real site this is a tab in your Kitchen Office. Your four signature bowls and Hamburger Steak n' Gravy are real; the rest are examples for you to replace.</p>
-      <textarea id="owner-meals" rows="17" spellcheck="false"># This week's meals - one per line: name | price | tags | description
-# Tags: special, vegan, sold out. Lines starting with # are ignored.
-Oxtail Bowl | 28 | special, sold out | Slow-braised Jamaican oxtails, rich gravy, served over seasoned rice n' peas, baked mac and Cheese, greens and dressing.
-Meat Loaf Bowl | 20 | special | Turkey-based meat loaf, made from scratch. Baked mac and Cheese, greens and dressing.
-Stuffed Salmon | 23 | special | Stuffed salmon with turkey bacon, green onion and savory cream cheese
-The Sampler Soul (Vegan) | 25 | special, vegan | 100% Vegan sampler includes; Ribless Tips, Sweat Heat Chikn, and phish w/ a side of Mac n cheeze &amp; greens.
-Hamburger Steak n' Gravy | 20 | | (example description - replace with your own)
-Smothered Chicken Bowl | 18 | | (example meal - replace with your own)
-Jerk Chicken Bowl | 19 | | (example meal - replace with your own)
-Shrimp &amp; Grits | 22 | special | (example meal - replace with your own)
-Fried Catfish Plate | 21 | | (example meal - replace with your own)
-Turkey Wings &amp; Rice | 19 | | (example meal - replace with your own)
-Ribless Tips Bowl (Vegan) | 21 | vegan | (example meal - replace with your own)
-Red Beans &amp; Rice with Smoked Sausage | 17 | | (example meal - replace with your own)
-Baked Chicken &amp; Greens Bowl | 18 | | (example meal - replace with your own)
-Garden Soul Salad (Vegan) | 15 | vegan | (example meal - replace with your own)</textarea>
+      <p class="owner-p">Type this week's meals, one per line — <b>name | price | tags | description | options</b>. Tags: <b>special</b> (your featured meals), <b>vegan</b>, <b>sold out</b>. <b>Options</b> are the choices a customer can pick when they customize that meal — write them as <b>label: choice, choice; label: choice, choice</b>. Press save and the customer list below updates. On your real site this is a tab in your Kitchen Office. Your four signature bowls and Hamburger Steak n' Gravy are real; the rest are examples for you to replace.</p>
+      <textarea id="owner-meals" rows="18" spellcheck="false"># This week's meals - one per line: name | price | tags | description | options
+# Tags: special, vegan, sold out. Options: label: choice, choice; label: choice. Lines starting with # are ignored.
+Oxtail Bowl | 28 | special, sold out | Slow-braised Jamaican oxtails, rich gravy, served over seasoned rice n' peas, baked mac and Cheese, greens and dressing. | sides: rice n' peas, baked mac, greens; dressing: yes, no
+Meat Loaf Bowl | 20 | special | Turkey-based meat loaf, made from scratch. Baked mac and Cheese, greens and dressing. | sides: baked mac, greens, rice n' peas; dressing: yes, no
+Stuffed Salmon | 23 | special | Stuffed salmon with turkey bacon, green onion and savory cream cheese | sides: baked mac, greens, rice n' peas
+The Sampler Soul (Vegan) | 25 | special, vegan | 100% Vegan sampler includes; Ribless Tips, Sweat Heat Chikn, and phish w/ a side of Mac n cheeze &amp; greens. | spice: mild, medium, hot
+Hamburger Steak n' Gravy | 20 | | (example description - replace with your own) | sides: baked mac, greens, rice n' peas; gravy: regular, extra
+Smothered Chicken Bowl | 18 | | (example meal - replace with your own) | sides: baked mac, greens, rice n' peas
+Jerk Chicken Bowl | 19 | | (example meal - replace with your own) | spice: mild, medium, hot; sides: rice n' peas, greens
+Shrimp &amp; Grits | 22 | special | (example meal - replace with your own) | spice: mild, medium, hot
+Fried Catfish Plate | 21 | | (example meal - replace with your own) | sides: fries, greens, baked mac
+Turkey Wings &amp; Rice | 19 | | (example meal - replace with your own) |
+Ribless Tips Bowl (Vegan) | 21 | vegan | (example meal - replace with your own) | sides: mac n cheeze, greens
+Red Beans &amp; Rice with Smoked Sausage | 17 | | (example meal - replace with your own) | spice: mild, hot
+Baked Chicken &amp; Greens Bowl | 18 | | (example meal - replace with your own) | sides: rice n' peas, baked mac
+Garden Soul Salad (Vegan) | 15 | vegan | (example meal - replace with your own) | dressing: house, vinaigrette, none</textarea>
       <div class="owner-r"><button type="button" class="bt fill" id="owner-save">SAVE THIS WEEK'S MEALS</button><span class="owner-msg" id="owner-msg"></span></div>
     </div>
 
     <h3>Order meal prep</h3>
-    <p class="lead">Say how many meals you want, then pick them from what Kamysha posted this week — her specials and the rest of her list — or switch on custom meals and tell her what you'd like. Then buy now.</p>
+    <p class="lead">Say how many meals you want, pick them from what Kamysha posted this week — her specials first — and customize any meal your way: pick your sides, add this, leave out that. Then buy now.</p>
 
     <div class="row2">
       <div class="fld">
@@ -225,14 +234,6 @@ Garden Soul Salad (Vegan) | 15 | vegan | (example meal - replace with your own)<
       <div class="seg" role="group" aria-label="Hot or cold" data-key="mealprep" data-field="hotcold">
         <button type="button" data-value="hot" aria-pressed="true">Hot Meals</button>
         <button type="button" data-value="cold" aria-pressed="false">Cold Meals</button>
-      </div>
-    </div>
-
-    <div class="fld">
-      <label>What goes in your order</label>
-      <div class="switches">
-        <label class="switch"><input type="checkbox" id="mealprep-fromlist" checked><span class="sl"></span> Kamysha's specials &amp; this week's meals</label>
-        <label class="switch"><input type="checkbox" id="mealprep-custom-on"><span class="sl"></span> Custom meals — you tell her what you want</label>
       </div>
     </div>
 
@@ -369,16 +370,30 @@ const LOGO_IMG = '<img src="https://eatbowlofsoul.com/wp-content/uploads/2026/09
 
 const state = {
   catering: {date:"", people:10, type:"Office lunch", veganOnly:false, notes:"", qty:{}, invoiceOpen:false, name:"", email:"", phone:""},
-  mealprep: {freq:"weekly", target:7, hotcold:"hot", veganOnly:false, fromList:true, custom:false, customText:"", qty:{}, invoiceOpen:false, name:"", email:"", phone:""}
+  mealprep: {freq:"weekly", target:7, hotcold:"hot", veganOnly:false, qty:{}, cust:{}, invoiceOpen:false, name:"", email:"", phone:""}
 };
 
 const fmt = n => "$" + (Math.round(n*100)/100).toFixed(2);
 const itemsFor = key => key === "catering" ? DISHES : MEALS;
 const listQty = key => itemsFor(key).reduce((s,d)=> s + (state[key].qty[d.id]||0), 0);
-const customQty = () => state.mealprep.custom ? (state.mealprep.qty.custom||0) : 0;
 const dishSubtotal = key => itemsFor(key).reduce((s,d)=> s + (state[key].qty[d.id]||0) * d.price, 0);
+/* r5: a meal is "customized" when its customize toggle is on and it is in the order */
+const custOf = id => state.mealprep.cust[id] || null;
+const customizedCount = () => MEALS.filter(d => (state.mealprep.qty[d.id]||0) > 0 && custOf(d.id) && custOf(d.id).on).length;
 
-/* name | price | tags | description — blank lines and # lines are skipped; a price is the digits in field 2 */
+/* name | price | tags | description | options — blank lines and # lines are skipped; a price is the digits in
+   field 2; options are "label: a, b; label: c, d" */
+function parseOptions(s){
+  const out = [];
+  String(s || "").split(";").forEach(part=>{
+    const i = part.indexOf(":");
+    if(i < 0) return;
+    const label = part.slice(0, i).trim();
+    const choices = part.slice(i+1).split(",").map(x=>x.trim()).filter(Boolean);
+    if(label && choices.length) out.push({label, choices});
+  });
+  return out;
+}
 function parseMeals(text){
   const out = []; let n = 0;
   String(text).split(/\r?\n/).forEach(line=>{
@@ -389,7 +404,8 @@ function parseMeals(text){
     n += 1;
     const tags = (f[2] || "").toLowerCase();
     out.push({id:"m"+n, name:f[0], price:Math.max(0, parseFloat(String(f[1]||"").replace(/[^0-9.]/g,"")) || 0),
-              special:/special/.test(tags), vegan:/vegan/.test(tags), soldout:/sold/.test(tags), desc:f[3] || ""});
+              special:/special/.test(tags), vegan:/vegan/.test(tags), soldout:/sold/.test(tags), desc:f[3] || "",
+              options:parseOptions(f[4])});
   });
   return out;
 }
@@ -399,6 +415,24 @@ function dishPhotoHTML(d){
                  : `<div class="dpick-ph none" aria-hidden="true">🍲</div>`;
 }
 const secHTML = t => `<div class="dpick-sec">${t}</div>`;
+
+/* r5: the custom fields under one meal — her pick lists first, then Add / Leave out / Notes */
+function customFieldsHTML(d){
+  const c = custOf(d.id) || {picks:{}, add:"", out:"", notes:""};
+  let html = `<div class="cfields" data-cfields="${d.id}">`;
+  d.options.forEach(o=>{
+    const cur = c.picks[o.label] || "";
+    html += `<label class="cf"><span>${esc(o.label)}</span><select data-cpick="${d.id}|${esc(o.label)}">
+      <option value=""${cur ? "" : " selected"}>choose…</option>
+      ${o.choices.map(ch => `<option value="${esc(ch)}"${cur===ch ? " selected" : ""}>${esc(ch)}</option>`).join("")}
+    </select></label>`;
+  });
+  html += `<label class="cf"><span>Add</span><input type="text" data-cf="${d.id}|add" value="${esc(c.add)}" placeholder="extra greens, extra gravy…"></label>
+    <label class="cf"><span>Leave out</span><input type="text" data-cf="${d.id}|out" value="${esc(c.out)}" placeholder="no onions, no cheese…"></label>
+    <label class="cf"><span>Notes</span><input type="text" data-cf="${d.id}|notes" value="${esc(c.notes)}" placeholder="low salt, allergy, anything else"></label>
+    <p class="cfnote">Changes may change the price — Kamysha confirms with you before anything is charged.</p></div>`;
+  return html;
+}
 
 function itemHTML(key, d){
   const st = state[key];
@@ -412,7 +446,9 @@ function itemHTML(key, d){
       <label class="pick"><input type="checkbox" data-pick="${d.id}"${q ? " checked" : ""}> Serve this</label>
     </div></div>`;
   }
-  return `<div class="dpick-item${so ? " so" : ""}">${dishPhotoHTML(d)}<div class="dpick-bd">
+  const c = custOf(d.id);
+  const on = !!(c && c.on);
+  return `<div class="dpick-item${so ? " so" : ""}${on ? " cust" : ""}">${dishPhotoHTML(d)}<div class="dpick-bd">
       <div class="dpick-r"><h4>${esc(d.name)}${tags}</h4><span class="dpick-p">${fmt(d.price)}</span></div>
       ${d.desc ? `<p class="dpick-d">${esc(d.desc)}</p>` : ""}
       <div class="qty" data-key="${key}" data-id="${d.id}">
@@ -420,21 +456,8 @@ function itemHTML(key, d){
         <span class="qn">${q}</span>
         <button type="button" class="qp" aria-label="More ${esc(d.name)}"${so ? " disabled" : ""}>+</button>
       </div>
-    </div></div>`;
-}
-
-function customHTML(){
-  const st = state.mealprep, q = st.qty.custom || 0;
-  return `<div class="dpick-item custom"><div class="dpick-ph none" aria-hidden="true">✍️</div>
-    <div class="dpick-bd">
-      <div class="dpick-r"><h4>Custom meal</h4><span class="dpick-p">priced by Kamysha</span></div>
-      <p class="dpick-d">Say what you want — protein, sides, how it's cooked, what to leave out. Kamysha confirms the price with you before anything is charged.</p>
-      <textarea id="mealprep-custom" placeholder="e.g. baked chicken, extra greens, no mac, low salt">${esc(st.customText)}</textarea>
-      <div class="qty" data-key="mealprep" data-id="custom">
-        <button type="button" class="qm" aria-label="Fewer custom meals">−</button>
-        <span class="qn">${q}</span>
-        <button type="button" class="qp" aria-label="More custom meals">+</button>
-      </div>
+      ${so ? "" : `<label class="pick"><input type="checkbox" data-customize="${d.id}"${on ? " checked" : ""}> Customize this meal</label>`}
+      ${on && !so ? customFieldsHTML(d) : ""}
     </div></div>`;
 }
 
@@ -451,17 +474,26 @@ function renderPicker(key){
     list.innerHTML = html || `<p class="tally">No vegan dishes match yet — turn off Vegan options only to see the full menu.</p>`;
     return;
   }
-  if(st.fromList){
-    const vis = MEALS.filter(d => !st.veganOnly || d.vegan);
-    const specials = vis.filter(d => d.special), rest = vis.filter(d => !d.special);
-    if(specials.length){ html += secHTML("Kamysha's specials"); specials.forEach(d => html += itemHTML(key, d)); }
-    if(rest.length){ html += secHTML("This week's meals"); rest.forEach(d => html += itemHTML(key, d)); }
-    if(!vis.length) html += MEALS.length
-      ? `<p class="tally">No vegan meals on this week's list — turn off Vegan options only to see them all.</p>`
-      : `<p class="tally">Kamysha hasn't posted this week's meals yet.</p>`;
-  }
-  if(st.custom) html += secHTML("Custom meals — made your way") + customHTML();
-  list.innerHTML = html || `<p class="tally">Switch on Kamysha's list or custom meals above to start picking.</p>`;
+  const vis = MEALS.filter(d => !st.veganOnly || d.vegan);
+  const specials = vis.filter(d => d.special), rest = vis.filter(d => !d.special);
+  if(specials.length){ html += secHTML("Kamysha's specials"); specials.forEach(d => html += itemHTML(key, d)); }
+  if(rest.length){ html += secHTML("This week's meals"); rest.forEach(d => html += itemHTML(key, d)); }
+  if(!vis.length) html += MEALS.length
+    ? `<p class="tally">No vegan meals on this week's list — turn off Vegan options only to see them all.</p>`
+    : `<p class="tally">Kamysha hasn't posted this week's meals yet.</p>`;
+  list.innerHTML = html;
+}
+
+/* r5: one line describing a customized meal's changes, escaped */
+function customSummary(d){
+  const c = custOf(d.id);
+  if(!c || !c.on) return "";
+  const bits = [];
+  d.options.forEach(o => { if(c.picks[o.label]) bits.push(esc(o.label) + ": " + esc(c.picks[o.label])); });
+  if(c.add.trim()) bits.push("add: " + esc(c.add.trim()));
+  if(c.out.trim()) bits.push("leave out: " + esc(c.out.trim()));
+  if(c.notes.trim()) bits.push("notes: " + esc(c.notes.trim()));
+  return bits.length ? "customized — " + bits.join(" · ") : "customized — (no changes picked yet)";
 }
 
 function invoiceHTML(key){
@@ -478,29 +510,28 @@ function invoiceHTML(key){
     total = dishSubtotal(key); totalTxt = fmt(total);
     MEALS.forEach(d=>{
       const q = st.qty[d.id]||0;
-      if(q>0) lines += `<div class="inv-line"><span>${q} × ${esc(d.name)}</span><span>${fmt(q*d.price)}</span></div>`;
+      if(q>0){
+        lines += `<div class="inv-line"><span>${q} × ${esc(d.name)}</span><span>${fmt(q*d.price)}</span></div>`;
+        const cs = customSummary(d);
+        if(cs) lines += `<div class="inv-line soft"><span>${cs}</span><span></span></div>`;
+      }
     });
-    const cq = customQty();
-    if(cq>0) lines += `<div class="inv-line"><span>${cq} × Custom meal${cq===1?"":"s"}${st.customText.trim() ? " — “" + esc(st.customText.trim()) + "”" : ""}</span><span>quoted by Kamysha</span></div>`;
     if(!lines) lines = `<div class="inv-line"><span>No meals selected yet</span><span>${fmt(0)}</span></div>`;
   }
   const who = [st.name, st.email, st.phone].filter(Boolean).map(esc).join(" · ");
   const meta = buy
     ? `${st.freq==="weekly" ? "Weekly meal prep" : "One-time meal prep"} · ${st.hotcold==="hot" ? "Hot meals" : "Cold meals"}`
     : `${st.date ? "Event date: "+esc(st.date) : "Event date: (not set)"} · ${esc(st.type)} · ${st.people} guest${st.people===1?"":"s"}`;
-  const cq = buy ? customQty() : 0;
   let foot;
   if(!buy){
     foot = `<div class="inv-line dep"><span>Deposit to book (30%, suggested)</span><span>${fmt(total*0.3)}</span></div>
     <div class="inv-line tot"><span>Total due</span><span>${totalTxt}</span></div>
     <p class="inv-note">Preview only — nothing has been sent or charged. Kamysha sends the real invoice, with her branding, once she confirms your menu and the final per-person price — it starts at ${fmt(CATERING_FROM)} and can go up with what you choose.</p>`;
-  } else if(cq > 0){
-    foot = `<button type="button" class="bt fill" style="width:100%;margin-top:10px" onclick="alert('Mockup: on the real site this sends your order to Kamysha; she replies with your price and a pay link. Nothing sent here.')">SEND TO KAMYSHA FOR MY PRICE</button>
-    <p class="inv-note">Custom meals are priced by Kamysha. She confirms your total${total > 0 ? " (" + fmt(total) + " of listed meals plus your custom meals)" : ""}, then you pay — nothing is charged here.</p>`;
   } else if(total > 0){
+    const nc = customizedCount();
     foot = `<div class="inv-line tot"><span>${st.freq==="weekly" ? "Total per week" : "Total"}</span><span>${fmt(total)}</span></div>
     <button type="button" class="bt fill" style="width:100%;margin-top:10px" onclick="alert('Mockup: on the real site this goes to checkout and charges the card. Nothing charged here.')">PAY ${fmt(total)} NOW</button>
-    <p class="inv-note">Checkout preview — on her site this charges the card${st.freq==="weekly" ? " and sets up the weekly order" : ""}. Nothing charged here.</p>`;
+    <p class="inv-note">Checkout preview — on her site this charges the card${st.freq==="weekly" ? " and sets up the weekly order" : ""}. Nothing charged here.${nc > 0 ? " Your customized meal" + (nc===1 ? "" : "s") + " are at the list price here; if a change costs more, Kamysha confirms it with you before anything is charged." : ""}</p>`;
   } else {
     foot = `<div class="inv-line tot"><span>Total</span><span>${fmt(0)}</span></div>
     <p class="inv-note">Add at least one meal above to check out — there is nothing to pay for yet.</p>`;
@@ -522,11 +553,15 @@ function updateCatering(){
   if(st.invoiceOpen) document.getElementById("catering-invoice").innerHTML = invoiceHTML("catering");
 }
 
+function refreshInvoice(key){
+  if(state[key].invoiceOpen) document.getElementById(key+"-invoice").innerHTML = invoiceHTML(key);
+}
+
 function updateMealPrep(){
   const st = state.mealprep;
   renderPicker("mealprep");
-  const fromList = listQty("mealprep"), cq = customQty(), picked = fromList + cq;
-  const mix = cq > 0 ? ` (${fromList} from the list + ${cq} custom)` : "";
+  const picked = listQty("mealprep"), nc = customizedCount();
+  const mix = nc > 0 ? ` (${nc} customized)` : "";
   const tallyEl = document.getElementById("mealprep-tally");
   if(st.target > 0){
     tallyEl.textContent = `${picked} of ${st.target} meals selected${mix}`;
@@ -536,9 +571,9 @@ function updateMealPrep(){
     tallyEl.className = "tally";
   }
   const freqLabel = st.freq==="weekly" ? "per week" : "one-time";
-  document.getElementById("mealprep-total-lbl").textContent = `${picked} meal${picked===1?"":"s"}, ${freqLabel}, ${st.hotcold==="hot"?"hot":"cold"}${cq > 0 ? " — custom meals priced by Kamysha" : ""}`;
-  document.getElementById("mealprep-total-amt").textContent = fmt(dishSubtotal("mealprep")) + (cq > 0 ? " +" : "");
-  if(st.invoiceOpen) document.getElementById("mealprep-invoice").innerHTML = invoiceHTML("mealprep");
+  document.getElementById("mealprep-total-lbl").textContent = `${picked} meal${picked===1?"":"s"}, ${freqLabel}, ${st.hotcold==="hot"?"hot":"cold"}${nc > 0 ? " — " + nc + " customized" : ""}`;
+  document.getElementById("mealprep-total-amt").textContent = fmt(dishSubtotal("mealprep"));
+  refreshInvoice("mealprep");
 }
 
 const refresh = key => key==="catering" ? updateCatering() : updateMealPrep();
@@ -576,18 +611,30 @@ document.addEventListener("click", e=>{
 document.addEventListener("input", e=>{
   const t = e.target, id = t.id;
   if(t.dataset && t.dataset.pick){ state.catering.qty[t.dataset.pick] = t.checked ? 1 : 0; updateCatering(); return; }
-  if(id==="mealprep-custom"){   /* typing in the custom box never re-renders the list (the box would lose focus) */
-    state.mealprep.customText = t.value;
-    if(state.mealprep.invoiceOpen) document.getElementById("mealprep-invoice").innerHTML = invoiceHTML("mealprep");
-    return;
+  if(t.dataset && t.dataset.customize){   /* r5: the customize toggle on one meal */
+    const mid = t.dataset.customize;
+    if(t.checked){ state.mealprep.cust[mid] = state.mealprep.cust[mid] || {on:true, picks:{}, add:"", out:"", notes:""}; state.mealprep.cust[mid].on = true; }
+    else { delete state.mealprep.cust[mid]; }
+    updateMealPrep(); return;
   }
-  if(id==="mealprep-fromlist"){ state.mealprep.fromList = t.checked; if(!t.checked) MEALS.forEach(d => { state.mealprep.qty[d.id] = 0; }); updateMealPrep(); return; }
-  if(id==="mealprep-custom-on"){ state.mealprep.custom = t.checked; if(!t.checked) state.mealprep.qty.custom = 0; updateMealPrep(); return; }
+  if(t.dataset && t.dataset.cf){            /* typing in a custom field never re-renders the list (it would lose focus) */
+    const [mid, field] = t.dataset.cf.split("|");
+    const c = state.mealprep.cust[mid]; if(!c) return;
+    c[field] = t.value;
+    refreshInvoice("mealprep"); return;
+  }
+  if(t.dataset && t.dataset.cpick){
+    const i = t.dataset.cpick.indexOf("|");
+    const mid = t.dataset.cpick.slice(0, i), label = t.dataset.cpick.slice(i+1);
+    const c = state.mealprep.cust[mid]; if(!c) return;
+    c.picks[label] = t.value;
+    refreshInvoice("mealprep"); return;
+  }
   if(id==="catering-vegan"){ state.catering.veganOnly = t.checked; updateCatering(); return; }
   if(id==="mealprep-vegan"){ state.mealprep.veganOnly = t.checked; updateMealPrep(); return; }
   if(id==="demo-avail"){
     demoAvail = t.checked;
-    if(!demoAvail) MEALS.forEach(d => { if(d.soldout) state.mealprep.qty[d.id] = 0; });   // nothing sold out stays in the basket
+    if(!demoAvail) MEALS.forEach(d => { if(d.soldout){ state.mealprep.qty[d.id] = 0; delete state.mealprep.cust[d.id]; } });   // nothing sold out stays in the basket
     updateMealPrep(); return;
   }
   const map = {
@@ -622,7 +669,7 @@ document.addEventListener("change", e=>{
 const ownerBox = document.getElementById("owner-box");
 document.getElementById("owner-save").addEventListener("click", ()=>{
   MEALS = parseMeals(document.getElementById("owner-meals").value);
-  state.mealprep.qty = {custom: state.mealprep.qty.custom || 0};   // the old picks pointed at the old list
+  state.mealprep.qty = {}; state.mealprep.cust = {};   // the old picks pointed at the old list
   const so = MEALS.filter(d => d.soldout).length, sp = MEALS.filter(d => d.special).length;
   document.getElementById("owner-msg").textContent = `Saved — ${MEALS.length} meal${MEALS.length===1?"":"s"} on this week's list (${sp} special${sp===1?"":"s"}, ${so} sold out). Customers see it below.`;
   updateMealPrep();
