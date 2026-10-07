@@ -31,7 +31,13 @@
      ADD A MEAL and SAVE. The saved menu stays on her device (localStorage) so it is still there when the page is
      reopened; START OVER puts the starting menu back. The pipe-delimited textarea, its instruction paragraph and
      the line parser are gone. Her four signature bowls and Hamburger Steak n' Gravy are real; the other rows
-     carry an EXAMPLE tag (on both sides) until she edits them. -->
+     carry an EXAMPLE tag (on both sides) until she edits them.
+     r7 2026-10-06 21:0x (KAMYSHA via Eric): (1) her personal name appears NOWHERE on the page - every line that said
+     she confirms / sends / posts now says Bowl of Soul (or management) does; the invoice header is the business name
+     only. (2) CATERING PRICING IS HER SWITCH: in the menu manager she picks BY THE PERSON or BY THE PLATE and the
+     starting price; the catering section, its hero line, the starting-price note, the total line and the estimate
+     follow that choice (per person = head count x price; per plate = number of plates x price). Saved with the
+     menu, kept on her device. -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -187,7 +193,7 @@
 </head>
 <body>
 
-<div class="mockbar">MOCKUP — <b>not Kamysha's live site.</b> Nothing here is sent or saved anywhere. Built 2026-10-05, revised 2026-10-06 from Kamysha's notes. <label><input type="checkbox" id="demo-avail"> demo: treat sold-out meals as available</label></div>
+<div class="mockbar">MOCKUP — <b>not the live Bowl of Soul site.</b> Nothing here is sent or saved anywhere. Built 2026-10-05, revised 2026-10-06 from the owner's notes. <label><input type="checkbox" id="demo-avail"> demo: treat sold-out meals as available</label></div>
 
 <div class="cm-head">
   <img src="https://eatbowlofsoul.com/wp-content/uploads/2026/09/logo-badge.png" alt="Bowl of Soul">
@@ -199,7 +205,7 @@
   <div class="bg"><img src="https://eatbowlofsoul.com/wp-content/uploads/2026/09/kamysha-cooking.jpg" alt=""></div>
   <div class="in">
     <h1>Meal prep, <span class="g">made with soul.</span></h1>
-    <p>Kamysha posts this week's meals. Pick the ones you want, make any of them your way — add this, leave out that, pick your sides — buy now, and they're ready every week or just once.</p>
+    <p>Bowl of Soul posts this week's meals. Pick the ones you want, make any of them your way — add this, leave out that, pick your sides — buy now, and they're ready every week or just once.</p>
     <div class="ctas">
       <a class="bt fill" href="#mealprep-form">BUILD YOUR MEALS</a>
       <a class="jump" href="#catering">Planning an event? Catering ↓</a>
@@ -212,11 +218,23 @@
 
     <div class="owner" id="owner-box">
       <div class="owner-h">
-        <div><h3>Menu manager</h3><p class="owner-s">Kamysha's side. Customers only see the menu you save here, your specials first. On your real site this is a tab in your Kitchen Office.</p></div>
+        <div><h3>Menu manager</h3><p class="owner-s">Owner's side. Customers only see the menu you save here (your specials first) and the catering pricing you choose below. On your real site this is a tab in your Kitchen Office.</p></div>
         <button type="button" class="owner-toggle" id="owner-toggle" aria-expanded="true">hide</button>
       </div>
       <div class="owner-body">
         <div id="owner-list"></div>
+        <div class="om" id="owner-cater">
+          <span style="font-size:.68rem;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:#6B5A2E">Catering pricing — how your catering section charges</span>
+          <div class="om-flags">
+            <label><input type="radio" name="cater-mode" value="person" data-oc="mode"> By the person</label>
+            <label><input type="radio" name="cater-mode" value="plate" data-oc="mode"> By the plate</label>
+          </div>
+          <div class="om-top" style="grid-template-columns:auto 96px 1fr">
+            <span style="font-size:.84rem;font-weight:700;color:#3A3222">Starts at $</span>
+            <input type="number" data-oc="from" min="0" step="1" aria-label="Starting price">
+            <span style="font-size:.78rem;color:#6B5A2E" id="owner-cater-unit"></span>
+          </div>
+        </div>
         <div class="owner-r">
           <button type="button" class="bt line" id="owner-add">+ ADD A MEAL</button>
           <button type="button" class="bt fill" id="owner-save">SAVE THIS WEEK'S MENU</button>
@@ -227,7 +245,7 @@
     </div>
 
     <h3>Order meal prep</h3>
-    <p class="lead">Say how many meals you want, pick them from what Kamysha posted this week — her specials first — and customize any meal your way: pick your sides, add this, leave out that. Then buy now.</p>
+    <p class="lead">Say how many meals you want, pick them from what Bowl of Soul posted this week — the specials first — and customize any meal your way: pick your sides, add this, leave out that. Then buy now.</p>
 
     <div class="row2">
       <div class="fld">
@@ -281,7 +299,7 @@
   <div class="bg"><img src="https://eatbowlofsoul.com/wp-content/uploads/2026/09/kamysha-event.jpg" alt=""></div>
   <div class="in">
     <h2>We also cater. <span class="g">Bring the soul to your table.</span></h2>
-    <p>From office lunches to family celebrations — flavor, heart and Southern hospitality for your next gathering. From $20 a person.</p>
+    <p>From office lunches to family celebrations — flavor, heart and Southern hospitality for your next gathering. <span id="catering-hero-from">From $20 a person.</span></p>
     <div class="ctas">
       <a class="bt fill" href="#catering-form">PLAN YOUR EVENT</a>
     </div>
@@ -291,7 +309,7 @@
 <section class="cm-form" id="catering-form">
   <div class="wrap in">
     <h3>Request catering</h3>
-    <p class="lead">Tell us about your event, how many people, and what you'd like served. Kamysha sends you a branded invoice to confirm.</p>
+    <p class="lead">Tell us about your event, how many people, and what you'd like served. Bowl of Soul sends you a branded invoice to confirm.</p>
 
     <div class="row2">
       <div class="fld">
@@ -303,7 +321,11 @@
         <input type="number" id="catering-people" min="1" value="10">
       </div>
     </div>
-    <p class="fromnote">Starts at <b>$20 per person</b> and can go up with the menu you choose — Kamysha confirms the final price on your invoice.</p>
+    <div class="fld" id="catering-plates-wrap" hidden>
+      <label for="catering-plates">Number of plates</label>
+      <input type="number" id="catering-plates" min="1" value="10">
+    </div>
+    <p class="fromnote" id="catering-fromnote">Starts at <b>$20 per person</b> and can go up with the menu you choose — Bowl of Soul confirms the final price on your invoice.</p>
 
     <div class="fld">
       <label for="catering-type">Type of event</label>
@@ -347,7 +369,7 @@
 </section>
 
 <footer class="cm-foot">
-  This is a <b>mockup</b> built 2026-10-05 and revised 2026-10-06 for Eric to review and send to Kamysha — it is not connected
+  This is a <b>mockup</b> built 2026-10-05 and revised 2026-10-06 for Eric to review and send to Bowl of Soul — it is not connected
   to the Bowl of Soul website, store or payment system. Nothing on this page has been sent anywhere.
 </footer>
 
@@ -355,7 +377,11 @@
 /* Catering menu: real dishes, verbatim from https://eatbowlofsoul.com/bos-menu-data/ (page 62, WP REST,
    modified 2026-10-03T03:19:43). Photos: only the two dishes that carry a PHOTO field in that data get a
    photo here — matches what her own live site actually shows (confirmed by render). */
-const CATERING_FROM = 20;   /* r4: Kamysha - "it starts at $20 a person but can go up" */
+const CATERING_FROM = 20;   /* r4: "it starts at $20 a person but can go up"; r7: the starting price AND the mode (by the person / by the plate) are the owner's switch in the menu manager - CATER */
+let CATER = {mode:"person", from:CATERING_FROM};
+const caterUnit = () => CATER.mode === "plate" ? "plate" : "person";
+const caterCount = st => CATER.mode === "plate" ? st.plates : st.people;
+const caterCountTxt = st => CATER.mode === "plate" ? `${st.plates} plate${st.plates===1?"":"s"}` : `${st.people} guest${st.people===1?"":"s"}`;
 const AVAIL_AS_OF = "2026-10-03";
 const DISHES = [
   {id:"oxtail",  name:"Oxtail Bowl", price:28, section:"Signature Bowls", vegan:false, soldout:true,
@@ -401,7 +427,7 @@ const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({"&":"&amp
 const LOGO_IMG = '<img src="https://eatbowlofsoul.com/wp-content/uploads/2026/09/logo-badge.png" alt="Bowl of Soul">';
 
 const state = {
-  catering: {date:"", people:10, type:"Office lunch", veganOnly:false, notes:"", qty:{}, invoiceOpen:false, name:"", email:"", phone:""},
+  catering: {date:"", people:10, plates:10, type:"Office lunch", veganOnly:false, notes:"", qty:{}, invoiceOpen:false, name:"", email:"", phone:""},
   mealprep: {freq:"weekly", target:7, hotcold:"hot", veganOnly:false, qty:{}, cust:{}, invoiceOpen:false, name:"", email:"", phone:""}
 };
 
@@ -433,7 +459,7 @@ function customFieldsHTML(d){
   html += `<label class="cf"><span>Add</span><input type="text" data-cf="${d.id}|add" value="${esc(c.add)}" placeholder="extra greens, extra gravy…"></label>
     <label class="cf"><span>Leave out</span><input type="text" data-cf="${d.id}|out" value="${esc(c.out)}" placeholder="no onions, no cheese…"></label>
     <label class="cf"><span>Notes</span><input type="text" data-cf="${d.id}|notes" value="${esc(c.notes)}" placeholder="low salt, allergy, anything else"></label>
-    <p class="cfnote">Changes may change the price — Kamysha confirms with you before anything is charged.</p></div>`;
+    <p class="cfnote">Changes may change the price — Bowl of Soul confirms with you before anything is charged.</p></div>`;
   return html;
 }
 
@@ -479,11 +505,11 @@ function renderPicker(key){
   }
   const vis = MEALS.filter(d => !st.veganOnly || d.vegan);
   const specials = vis.filter(d => d.special), rest = vis.filter(d => !d.special);
-  if(specials.length){ html += secHTML("Kamysha's specials"); specials.forEach(d => html += itemHTML(key, d)); }
+  if(specials.length){ html += secHTML("This week's specials"); specials.forEach(d => html += itemHTML(key, d)); }
   if(rest.length){ html += secHTML("This week's meals"); rest.forEach(d => html += itemHTML(key, d)); }
   if(!vis.length) html += MEALS.length
     ? `<p class="tally">No vegan meals on this week's list — turn off Vegan options only to see them all.</p>`
-    : `<p class="tally">Kamysha hasn't posted this week's meals yet.</p>`;
+    : `<p class="tally">This week's meals haven't been posted yet.</p>`;
   list.innerHTML = html;
 }
 
@@ -504,8 +530,8 @@ function invoiceHTML(key){
   const buy = key === "mealprep";
   let lines = "", total, totalTxt;
   if(!buy){
-    total = st.people * CATERING_FROM; totalTxt = "from " + fmt(total);
-    lines += `<div class="inv-line"><span>Catering — ${st.people} guest${st.people===1?"":"s"} × from ${fmt(CATERING_FROM)}/person</span><span>${totalTxt}</span></div>`;
+    total = caterCount(st) * CATER.from; totalTxt = "from " + fmt(total);
+    lines += `<div class="inv-line"><span>Catering — ${caterCountTxt(st)} × from ${fmt(CATER.from)}/${caterUnit()}</span><span>${totalTxt}</span></div>`;
     const picks = DISHES.filter(d => (st.qty[d.id]||0) > 0).map(d => esc(d.name)).join(", ");
     if(picks) lines += `<div class="inv-line soft"><span>Menu: ${picks}</span><span></span></div>`;
     if(st.notes.trim()) lines += `<div class="inv-line soft"><span>Requests: ${esc(st.notes.trim())}</span><span></span></div>`;
@@ -524,22 +550,22 @@ function invoiceHTML(key){
   const who = [st.name, st.email, st.phone].filter(Boolean).map(esc).join(" · ");
   const meta = buy
     ? `${st.freq==="weekly" ? "Weekly meal prep" : "One-time meal prep"} · ${st.hotcold==="hot" ? "Hot meals" : "Cold meals"}`
-    : `${st.date ? "Event date: "+esc(st.date) : "Event date: (not set)"} · ${esc(st.type)} · ${st.people} guest${st.people===1?"":"s"}`;
+    : `${st.date ? "Event date: "+esc(st.date) : "Event date: (not set)"} · ${esc(st.type)} · ${st.people} guest${st.people===1?"":"s"}${CATER.mode === "plate" ? " · " + st.plates + " plate" + (st.plates===1?"":"s") : ""}`;
   let foot;
   if(!buy){
     foot = `<div class="inv-line dep"><span>Deposit to book (30%, suggested)</span><span>${fmt(total*0.3)}</span></div>
     <div class="inv-line tot"><span>Total due</span><span>${totalTxt}</span></div>
-    <p class="inv-note">Preview only — nothing has been sent or charged. Kamysha sends the real invoice, with her branding, once she confirms your menu and the final per-person price — it starts at ${fmt(CATERING_FROM)} and can go up with what you choose.</p>`;
+    <p class="inv-note">Preview only — nothing has been sent or charged. Bowl of Soul sends the real invoice, with its branding, once management confirms your menu and the final price per ${caterUnit()} — it starts at ${fmt(CATER.from)} and can go up with what you choose.</p>`;
   } else if(total > 0){
     const nc = customizedCount();
     foot = `<div class="inv-line tot"><span>${st.freq==="weekly" ? "Total per week" : "Total"}</span><span>${fmt(total)}</span></div>
     <button type="button" class="bt fill" style="width:100%;margin-top:10px" onclick="alert('Mockup: on the real site this goes to checkout and charges the card. Nothing charged here.')">PAY ${fmt(total)} NOW</button>
-    <p class="inv-note">Checkout preview — on her site this charges the card${st.freq==="weekly" ? " and sets up the weekly order" : ""}. Nothing charged here.${nc > 0 ? " Your customized meal" + (nc===1 ? "" : "s") + " are at the list price here; if a change costs more, Kamysha confirms it with you before anything is charged." : ""}</p>`;
+    <p class="inv-note">Checkout preview — on her site this charges the card${st.freq==="weekly" ? " and sets up the weekly order" : ""}. Nothing charged here.${nc > 0 ? " Your customized meal" + (nc===1 ? "" : "s") + " are at the list price here; if a change costs more, Bowl of Soul confirms it with you before anything is charged." : ""}</p>`;
   } else {
     foot = `<div class="inv-line tot"><span>Total</span><span>${fmt(0)}</span></div>
     <p class="inv-note">Add at least one meal above to check out — there is nothing to pay for yet.</p>`;
   }
-  return `<div class="inv-head">${LOGO_IMG}<div><div class="biz">Bowl of Soul — Kamysha Black</div><div style="font-size:.7rem;color:#8A5E07">eatbowlofsoul.com</div></div></div>
+  return `<div class="inv-head">${LOGO_IMG}<div><div class="biz">Bowl of Soul</div><div style="font-size:.7rem;color:#8A5E07">eatbowlofsoul.com</div></div></div>
     <span class="inv-tag">${buy ? "CHECKOUT PREVIEW — nothing charged" : "ESTIMATE — not a real invoice, nothing sent"}</span>
     <div class="inv-meta">${meta}${who ? "<br>For: "+who : ""}</div>
     ${lines}
@@ -550,8 +576,11 @@ function invoiceHTML(key){
 function updateCatering(){
   const st = state.catering;
   renderPicker("catering");
-  const from = st.people * CATERING_FROM;
-  document.getElementById("catering-total-lbl").textContent = `${st.people} guest${st.people===1?"":"s"} × from ${fmt(CATERING_FROM)}/person`;
+  const from = caterCount(st) * CATER.from, unit = caterUnit();
+  document.getElementById("catering-plates-wrap").hidden = CATER.mode !== "plate";
+  document.getElementById("catering-hero-from").textContent = `From ${fmt(CATER.from).replace(/\.00$/, "")} a ${unit}.`;
+  document.getElementById("catering-fromnote").innerHTML = `Starts at <b>${fmt(CATER.from)} per ${unit}</b> and can go up with the menu you choose — Bowl of Soul confirms the final price on your invoice.`;
+  document.getElementById("catering-total-lbl").textContent = `${caterCountTxt(st)} × from ${fmt(CATER.from)}/${unit}`;
   document.getElementById("catering-total-amt").textContent = "from " + fmt(from);
   if(st.invoiceOpen) document.getElementById("catering-invoice").innerHTML = invoiceHTML("catering");
 }
@@ -643,6 +672,7 @@ document.addEventListener("input", e=>{
   const map = {
     "catering-date": ["catering","date", v=>v],
     "catering-people": ["catering","people", v=>Math.max(1, parseInt(v)||1)],
+    "catering-plates": ["catering","plates", v=>Math.max(1, parseInt(v)||1)],
     "catering-type": ["catering","type", v=>v],
     "catering-notes": ["catering","notes", v=>v],
     "catering-name": ["catering","name", v=>v],
@@ -666,12 +696,14 @@ document.addEventListener("change", e=>{
   const id = e.target.id;
   if(id==="mealprep-target") e.target.value = state.mealprep.target;
   if(id==="catering-people") e.target.value = state.catering.people;
+  if(id==="catering-plates") e.target.value = state.catering.plates;
 });
 
 /* r6: Kamysha's menu manager. She edits a DRAFT copy, card by card; SAVE makes it the customer menu and keeps it
    on this device (localStorage) so it is still there when the page reopens. Typing never re-renders the cards
    (it would lose focus); add/remove do. */
-const MENU_KEY = "bos_mock_menu_r6";
+const MENU_KEY = "bos_mock_menu_r7";   /* r7: {meals:[...], cater:{mode, from}} */
+const cloneCater = c => ({mode: c && c.mode === "plate" ? "plate" : "person", from: Math.max(0, +(c && c.from) || 0)});
 let seq = 0;
 const newId = () => "m" + (++seq);
 function cloneMeals(arr){
@@ -682,10 +714,21 @@ function cloneMeals(arr){
   });
 }
 function loadMenu(){
-  try{ const v = JSON.parse(localStorage.getItem(MENU_KEY)); if(Array.isArray(v)) return cloneMeals(v); }catch(e){}
+  try{ const v = JSON.parse(localStorage.getItem(MENU_KEY)); if(v && Array.isArray(v.meals)){ CATER = cloneCater(v.cater); return cloneMeals(v.meals); } }catch(e){}
+  CATER = {mode:"person", from:CATERING_FROM};
   return cloneMeals(SEED);
 }
-let DRAFT = [];
+let DRAFT = [], DRAFT_CATER = {mode:"person", from:CATERING_FROM};
+function renderOwnerCater(){
+  document.querySelectorAll('input[data-oc="mode"]').forEach(r => { r.checked = r.value === DRAFT_CATER.mode; });
+  document.querySelector('input[data-oc="from"]').value = DRAFT_CATER.from;
+  document.getElementById("owner-cater-unit").textContent = (DRAFT_CATER.mode === "plate" ? "per plate" : "per person") + " - can go up with the menu; the final price is confirmed on the invoice";
+}
+document.getElementById("owner-cater").addEventListener("input", e=>{
+  const t = e.target; if(!t.dataset.oc) return;
+  if(t.dataset.oc === "mode"){ DRAFT_CATER.mode = t.value === "plate" ? "plate" : "person"; renderOwnerCater(); }
+  else DRAFT_CATER.from = Math.max(0, parseFloat(t.value) || 0);
+});
 const draftOf = id => DRAFT.find(d => d.id === id);
 function renderOwner(){
   document.getElementById("owner-list").innerHTML = DRAFT.map(d => `<div class="om" data-om="${d.id}">
@@ -743,17 +786,17 @@ document.getElementById("owner-save").addEventListener("click", ()=>{
   const blank = DRAFT.filter(d => !d.name.trim()).length;
   const keep = DRAFT.filter(d => d.name.trim()).map(d => Object.assign({}, d, {name:d.name.trim(), desc:d.desc.trim(),
     options:d.options.filter(o => o.label.trim() && o.choices.length).map(o => ({label:o.label.trim(), choices:o.choices}))}));
-  MEALS = cloneMeals(keep); DRAFT = cloneMeals(MEALS);
-  try{ localStorage.setItem(MENU_KEY, JSON.stringify(MEALS)); }catch(e){}
+  MEALS = cloneMeals(keep); DRAFT = cloneMeals(MEALS); CATER = cloneCater(DRAFT_CATER); DRAFT_CATER = cloneCater(CATER);
+  try{ localStorage.setItem(MENU_KEY, JSON.stringify({meals:MEALS, cater:CATER})); }catch(e){}
   state.mealprep.qty = {}; state.mealprep.cust = {};   // the old picks pointed at the old menu
   const so = MEALS.filter(d => d.soldout).length, sp = MEALS.filter(d => d.special).length;
-  document.getElementById("owner-msg").textContent = `Saved - ${MEALS.length} meal${MEALS.length===1?"":"s"} on this week's menu (${sp} special${sp===1?"":"s"}, ${so} sold out)${blank ? `; ${blank} with no name left off` : ""}. Customers see it below.`;
-  renderOwner(); updateMealPrep();
+  document.getElementById("owner-msg").textContent = `Saved - ${MEALS.length} meal${MEALS.length===1?"":"s"} on this week's menu (${sp} special${sp===1?"":"s"}, ${so} sold out)${blank ? `; ${blank} with no name left off` : ""}. Catering is priced by the ${CATER.mode} from ${fmt(CATER.from)}. Customers see it below.`;
+  renderOwner(); renderOwnerCater(); updateMealPrep(); updateCatering();
 });
 document.getElementById("owner-reset").addEventListener("click", ()=>{
   if(!confirm("Put the starting menu back? The menu saved on this device will be replaced.")) return;
   try{ localStorage.removeItem(MENU_KEY); }catch(e){}
-  DRAFT = cloneMeals(SEED); renderOwner();
+  DRAFT = cloneMeals(SEED); DRAFT_CATER = {mode:"person", from:CATERING_FROM}; renderOwner(); renderOwnerCater();
   document.getElementById("owner-msg").textContent = "The starting menu is back - press SAVE to post it.";
 });
 const ownerBox = document.getElementById("owner-box");
@@ -763,8 +806,8 @@ document.getElementById("owner-toggle").addEventListener("click", e=>{
   e.target.setAttribute("aria-expanded", String(!hidden));
 });
 
-MEALS = loadMenu(); DRAFT = cloneMeals(MEALS);
-renderOwner();
+MEALS = loadMenu(); DRAFT = cloneMeals(MEALS); DRAFT_CATER = cloneCater(CATER);
+renderOwner(); renderOwnerCater();
 updateCatering();
 updateMealPrep();
 </script>
