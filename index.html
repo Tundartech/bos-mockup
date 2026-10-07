@@ -553,8 +553,7 @@ function invoiceHTML(key){
     : `${st.date ? "Event date: "+esc(st.date) : "Event date: (not set)"} · ${esc(st.type)} · ${st.people} guest${st.people===1?"":"s"}${CATER.mode === "plate" ? " · " + st.plates + " plate" + (st.plates===1?"":"s") : ""}`;
   let foot;
   if(!buy){
-    foot = `<div class="inv-line dep"><span>Deposit to book (30%, suggested)</span><span>${fmt(total*0.3)}</span></div>
-    <div class="inv-line tot"><span>Total due</span><span>${totalTxt}</span></div>
+    foot = `<div class="inv-line tot"><span>Total due</span><span>${totalTxt}</span></div>
     <p class="inv-note">Preview only — nothing has been sent or charged. Bowl of Soul sends the real invoice, with its branding, once management confirms your menu and the final price per ${caterUnit()} — it starts at ${fmt(CATER.from)} and can go up with what you choose.</p>`;
   } else if(total > 0){
     const nc = customizedCount();
