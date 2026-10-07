@@ -24,7 +24,14 @@
      and says Kamysha confirms any price change before charging. The two "what goes in your order"
      switches are gone (her list is always the menu).
      In her box, her four signature bowls and Hamburger Steak n' Gravy are real; the other meals are
-     EXAMPLES marked as such, for her to replace. -->
+     EXAMPLES marked as such, for her to replace.
+     r6 2026-10-06 20:0x (ERIC: the typed-lines text box on Kamysha's side and its label were not acceptable):
+     her side is now a MENU MANAGER - one card per meal with real fields (name, price, what's in it, Special /
+     Vegan / Sold out boxes, and the choice lists customers pick from, each with its own add and remove), plus
+     ADD A MEAL and SAVE. The saved menu stays on her device (localStorage) so it is still there when the page is
+     reopened; START OVER puts the starting menu back. The pipe-delimited textarea, its instruction paragraph and
+     the line parser are gone. Her four signature bowls and Hamburger Steak n' Gravy are real; the other rows
+     carry an EXAMPLE tag (on both sides) until she edits them. -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -97,17 +104,29 @@
   .switch input:checked + .sl:before{left:20px}
   .switch input:focus-visible + .sl{outline:2px solid #B07E0A;outline-offset:2px}
 
-  /* r4: Kamysha's own box — what SHE types, customers never see it */
-  .owner{background:#1F1A12;color:var(--cream);border:1.5px dashed var(--gold);border-radius:8px;padding:16px;margin-bottom:28px}
-  .owner-h{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
-  .owner-tag{display:inline-block;background:var(--gold);color:var(--ink);font-size:.66rem;font-weight:800;letter-spacing:1px;padding:4px 10px;border-radius:999px}
+  /* r6: Kamysha's menu manager - one card per meal with real fields; customers never see it */
+  .owner{background:#1F1A12;color:var(--cream);border:1.5px solid var(--gold);border-radius:8px;padding:16px;margin-bottom:28px}
+  .owner-h{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap}
+  .owner-h h3{font-size:1.2rem;color:var(--gold);margin:0}
+  .owner-s{font-size:.82rem;color:var(--mut);margin-top:2px}
   .owner-toggle{background:transparent;border:1px solid var(--gold);color:var(--gold);border-radius:3px;padding:4px 10px;font-size:.72rem;font-weight:700;cursor:pointer}
-  .owner-p{font-size:.84rem;color:var(--mut);margin:10px 0 10px}
-  .owner-p b{color:var(--cream)}
-  .owner textarea{width:100%;background:#fff;color:#1A150D;border:1.5px solid #C9BCA0;border-radius:4px;padding:10px;font:13px/1.45 Consolas,'Courier New',monospace;resize:vertical}
-  .owner-r{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:10px}
+  .owner.hidden .owner-body{display:none}
+  .om{background:#fff;color:#1A150D;border-radius:8px;padding:12px;margin-top:12px;display:grid;gap:8px}
+  .om input[type=text],.om input[type=number]{width:100%;background:#fff;border:1.5px solid #C9BCA0;border-radius:4px;padding:8px 10px;font:inherit;font-size:.9rem;color:#1A150D}
+  .om-top{display:grid;grid-template-columns:1fr 76px auto;gap:8px;align-items:center}
+  .om-top input[type=text]{font-weight:700}
+  .om-top input[type=number]{padding:8px 6px}
+  .om-x{background:transparent;border:1px solid #C9BCA0;color:#A0541A;border-radius:4px;padding:7px 8px;font-size:.7rem;font-weight:700;cursor:pointer;white-space:nowrap}
+  .om-flags{display:flex;gap:14px;flex-wrap:wrap;font-size:.84rem;font-weight:600;color:#3A3222}
+  .om-flags label{display:inline-flex;align-items:center;gap:6px;cursor:pointer}
+  .om-flags input{width:17px;height:17px;accent-color:#E8A413}
+  .om-opts{border-top:1px dashed #DDD1B2;padding-top:8px;display:grid;gap:6px}
+  .om-opts .ol{font-size:.68rem;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:#6B5A2E}
+  .om-opt{display:grid;grid-template-columns:1fr 2fr auto;gap:6px;align-items:center}
+  .om-add{background:transparent;border:1px dashed #B07E0A;color:#8A5E07;border-radius:4px;padding:6px 10px;font-size:.76rem;font-weight:700;cursor:pointer;justify-self:start}
+  .om-ex{display:inline-block;background:#F2E6C8;color:#8A5E07;font-size:.62rem;font-weight:800;letter-spacing:.5px;padding:2px 8px;border-radius:999px;justify-self:start}
+  .owner-r{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:14px}
   .owner-msg{font-size:.82rem;color:var(--gold);font-weight:600}
-  .owner.hidden .owner-p,.owner.hidden textarea,.owner.hidden .owner-r{display:none}
 
   .dpick-list{display:grid;gap:12px;margin:16px 0}
   @media(min-width:680px){.dpick-list{grid-template-columns:1fr 1fr}}
@@ -123,6 +142,7 @@
   .dpick-d{color:#4A4232;font-size:.83rem;margin-top:4px}
   .vegtag{display:inline-block;border:1px solid #3F7D3B;color:#3F7D3B;font-size:.6rem;font-weight:800;letter-spacing:.5px;padding:1px 6px;border-radius:999px;margin-left:6px;vertical-align:middle}
   .sptag{display:inline-block;background:var(--gold);color:var(--ink);font-size:.6rem;font-weight:800;letter-spacing:.5px;padding:1px 6px;border-radius:999px;margin-left:6px;vertical-align:middle}
+  .extag{display:inline-block;border:1px solid #9A8E72;color:#6B6252;font-size:.6rem;font-weight:800;letter-spacing:.5px;padding:1px 6px;border-radius:999px;margin-left:6px;vertical-align:middle}
   .qty{display:flex;align-items:center;gap:8px;margin-top:10px}
   .qty button{width:28px;height:28px;border-radius:4px;border:1.5px solid var(--gold);background:#fff;color:#8A5E07;font-size:1.05rem;font-weight:700;cursor:pointer;line-height:1}
   .qty button:active{background:var(--gold);color:#fff}
@@ -191,25 +211,19 @@
   <div class="wrap in">
 
     <div class="owner" id="owner-box">
-      <div class="owner-h"><span class="owner-tag">KAMYSHA'S SIDE — customers never see this box</span><button type="button" class="owner-toggle" id="owner-toggle" aria-expanded="true">hide</button></div>
-      <p class="owner-p">Type this week's meals, one per line — <b>name | price | tags | description | options</b>. Tags: <b>special</b> (your featured meals), <b>vegan</b>, <b>sold out</b>. <b>Options</b> are the choices a customer can pick when they customize that meal — write them as <b>label: choice, choice; label: choice, choice</b>. Press save and the customer list below updates. On your real site this is a tab in your Kitchen Office. Your four signature bowls and Hamburger Steak n' Gravy are real; the rest are examples for you to replace.</p>
-      <textarea id="owner-meals" rows="18" spellcheck="false"># This week's meals - one per line: name | price | tags | description | options
-# Tags: special, vegan, sold out. Options: label: choice, choice; label: choice. Lines starting with # are ignored.
-Oxtail Bowl | 28 | special, sold out | Slow-braised Jamaican oxtails, rich gravy, served over seasoned rice n' peas, baked mac and Cheese, greens and dressing. | sides: rice n' peas, baked mac, greens; dressing: yes, no
-Meat Loaf Bowl | 20 | special | Turkey-based meat loaf, made from scratch. Baked mac and Cheese, greens and dressing. | sides: baked mac, greens, rice n' peas; dressing: yes, no
-Stuffed Salmon | 23 | special | Stuffed salmon with turkey bacon, green onion and savory cream cheese | sides: baked mac, greens, rice n' peas
-The Sampler Soul (Vegan) | 25 | special, vegan | 100% Vegan sampler includes; Ribless Tips, Sweat Heat Chikn, and phish w/ a side of Mac n cheeze &amp; greens. | spice: mild, medium, hot
-Hamburger Steak n' Gravy | 20 | | (example description - replace with your own) | sides: baked mac, greens, rice n' peas; gravy: regular, extra
-Smothered Chicken Bowl | 18 | | (example meal - replace with your own) | sides: baked mac, greens, rice n' peas
-Jerk Chicken Bowl | 19 | | (example meal - replace with your own) | spice: mild, medium, hot; sides: rice n' peas, greens
-Shrimp &amp; Grits | 22 | special | (example meal - replace with your own) | spice: mild, medium, hot
-Fried Catfish Plate | 21 | | (example meal - replace with your own) | sides: fries, greens, baked mac
-Turkey Wings &amp; Rice | 19 | | (example meal - replace with your own) |
-Ribless Tips Bowl (Vegan) | 21 | vegan | (example meal - replace with your own) | sides: mac n cheeze, greens
-Red Beans &amp; Rice with Smoked Sausage | 17 | | (example meal - replace with your own) | spice: mild, hot
-Baked Chicken &amp; Greens Bowl | 18 | | (example meal - replace with your own) | sides: rice n' peas, baked mac
-Garden Soul Salad (Vegan) | 15 | vegan | (example meal - replace with your own) | dressing: house, vinaigrette, none</textarea>
-      <div class="owner-r"><button type="button" class="bt fill" id="owner-save">SAVE THIS WEEK'S MEALS</button><span class="owner-msg" id="owner-msg"></span></div>
+      <div class="owner-h">
+        <div><h3>Menu manager</h3><p class="owner-s">Kamysha's side. Customers only see the menu you save here, your specials first. On your real site this is a tab in your Kitchen Office.</p></div>
+        <button type="button" class="owner-toggle" id="owner-toggle" aria-expanded="true">hide</button>
+      </div>
+      <div class="owner-body">
+        <div id="owner-list"></div>
+        <div class="owner-r">
+          <button type="button" class="bt line" id="owner-add">+ ADD A MEAL</button>
+          <button type="button" class="bt fill" id="owner-save">SAVE THIS WEEK'S MENU</button>
+          <button type="button" class="owner-toggle" id="owner-reset">start over</button>
+          <span class="owner-msg" id="owner-msg"></span>
+        </div>
+      </div>
     </div>
 
     <h3>Order meal prep</h3>
@@ -361,7 +375,25 @@ const DISHES = [
   {id:"pie",     name:"Mini Sweet Potato Pie", price:5, section:"Desserts", vegan:false, soldout:false,
    desc:"A personal-size take on the Southern staple.", photo:null}
 ];
-/* r4: the MEAL PREP list is whatever Kamysha typed in her box — parsed on load and on every save. */
+/* r6: the starting menu. Her four signature bowls and Hamburger Steak n' Gravy are real (her site's menu data);
+   rows marked ex are EXAMPLES for Kamysha to replace in the menu manager - the tag goes when she edits the row.
+   Whatever she saves in the manager replaces this (kept on her device). */
+const SEED = [
+  {name:"Oxtail Bowl", price:28, special:true, soldout:true, desc:"Slow-braised Jamaican oxtails, rich gravy, served over seasoned rice n' peas, baked mac and Cheese, greens and dressing.", options:[{label:"Sides", choices:["rice n' peas","baked mac","greens"]},{label:"Dressing", choices:["yes","no"]}]},
+  {name:"Meat Loaf Bowl", price:20, special:true, desc:"Turkey-based meat loaf, made from scratch. Baked mac and Cheese, greens and dressing.", options:[{label:"Sides", choices:["baked mac","greens","rice n' peas"]},{label:"Dressing", choices:["yes","no"]}]},
+  {name:"Stuffed Salmon", price:23, special:true, desc:"Stuffed salmon with turkey bacon, green onion and savory cream cheese", options:[{label:"Sides", choices:["baked mac","greens","rice n' peas"]}]},
+  {name:"The Sampler Soul (Vegan)", price:25, special:true, vegan:true, desc:"100% Vegan sampler includes; Ribless Tips, Sweat Heat Chikn, and phish w/ a side of Mac n cheeze & greens.", options:[{label:"Spice", choices:["mild","medium","hot"]}]},
+  {name:"Hamburger Steak n' Gravy", price:20, desc:"", options:[{label:"Sides", choices:["baked mac","greens","rice n' peas"]},{label:"Gravy", choices:["regular","extra"]}]},
+  {ex:true, name:"Smothered Chicken Bowl", price:18, desc:"Pan-seared chicken smothered in onion gravy over rice, with greens.", options:[{label:"Sides", choices:["baked mac","greens","rice n' peas"]}]},
+  {ex:true, name:"Jerk Chicken Bowl", price:19, desc:"Jamaican jerk chicken over rice n' peas with greens.", options:[{label:"Spice", choices:["mild","medium","hot"]},{label:"Sides", choices:["rice n' peas","greens"]}]},
+  {ex:true, name:"Shrimp & Grits", price:22, special:true, desc:"Creole shrimp over creamy stone-ground grits.", options:[{label:"Spice", choices:["mild","medium","hot"]}]},
+  {ex:true, name:"Fried Catfish Plate", price:21, desc:"Cornmeal-crusted catfish with two sides.", options:[{label:"Sides", choices:["fries","greens","baked mac"]}]},
+  {ex:true, name:"Turkey Wings & Rice", price:19, desc:"Baked turkey wings, gravy and seasoned rice.", options:[]},
+  {ex:true, name:"Ribless Tips Bowl (Vegan)", price:21, vegan:true, desc:"Plant-based rib tips over rice with mac n cheeze and greens.", options:[{label:"Sides", choices:["mac n cheeze","greens"]}]},
+  {ex:true, name:"Red Beans & Rice with Smoked Sausage", price:17, desc:"Louisiana red beans, smoked sausage and white rice.", options:[{label:"Spice", choices:["mild","hot"]}]},
+  {ex:true, name:"Baked Chicken & Greens Bowl", price:18, desc:"Herb-baked chicken with collard greens and rice.", options:[{label:"Sides", choices:["rice n' peas","baked mac"]}]},
+  {ex:true, name:"Garden Soul Salad (Vegan)", price:15, vegan:true, desc:"Mixed greens, roasted vegetables and house dressing.", options:[{label:"Dressing", choices:["house","vinaigrette","none"]}]}
+];
 let MEALS = [];
 let demoAvail = false;
 const soldOutHere = (key, d) => key === "mealprep" && d.soldout && !demoAvail;
@@ -380,35 +412,6 @@ const dishSubtotal = key => itemsFor(key).reduce((s,d)=> s + (state[key].qty[d.i
 /* r5: a meal is "customized" when its customize toggle is on and it is in the order */
 const custOf = id => state.mealprep.cust[id] || null;
 const customizedCount = () => MEALS.filter(d => (state.mealprep.qty[d.id]||0) > 0 && custOf(d.id) && custOf(d.id).on).length;
-
-/* name | price | tags | description | options — blank lines and # lines are skipped; a price is the digits in
-   field 2; options are "label: a, b; label: c, d" */
-function parseOptions(s){
-  const out = [];
-  String(s || "").split(";").forEach(part=>{
-    const i = part.indexOf(":");
-    if(i < 0) return;
-    const label = part.slice(0, i).trim();
-    const choices = part.slice(i+1).split(",").map(x=>x.trim()).filter(Boolean);
-    if(label && choices.length) out.push({label, choices});
-  });
-  return out;
-}
-function parseMeals(text){
-  const out = []; let n = 0;
-  String(text).split(/\r?\n/).forEach(line=>{
-    line = line.trim();
-    if(!line || line.startsWith("#")) return;
-    const f = line.split("|").map(s => s.trim());
-    if(!f[0]) return;
-    n += 1;
-    const tags = (f[2] || "").toLowerCase();
-    out.push({id:"m"+n, name:f[0], price:Math.max(0, parseFloat(String(f[1]||"").replace(/[^0-9.]/g,"")) || 0),
-              special:/special/.test(tags), vegan:/vegan/.test(tags), soldout:/sold/.test(tags), desc:f[3] || "",
-              options:parseOptions(f[4])});
-  });
-  return out;
-}
 
 function dishPhotoHTML(d){
   return d.photo ? `<img class="dpick-ph" src="${d.photo}" alt="${esc(d.name)}">`
@@ -438,7 +441,7 @@ function itemHTML(key, d){
   const st = state[key];
   const q = st.qty[d.id] || 0;
   const so = soldOutHere(key, d);
-  const tags = (d.special ? '<span class="sptag">SPECIAL</span>' : "") + (d.vegan ? '<span class="vegtag">VEGAN</span>' : "") + (so ? '<span class="sotag">SOLD OUT THIS WEEK</span>' : "");
+  const tags = (d.ex ? '<span class="extag">EXAMPLE</span>' : "") + (d.special ? '<span class="sptag">SPECIAL</span>' : "") + (d.vegan ? '<span class="vegtag">VEGAN</span>' : "") + (so ? '<span class="sotag">SOLD OUT THIS WEEK</span>' : "");
   if(key === "catering"){
     return `<div class="dpick-item">${dishPhotoHTML(d)}<div class="dpick-bd">
       <div class="dpick-r"><h4>${esc(d.name)}${tags}</h4></div>
@@ -665,22 +668,103 @@ document.addEventListener("change", e=>{
   if(id==="catering-people") e.target.value = state.catering.people;
 });
 
-/* r4: Kamysha's box — save re-reads her lines; the customer list below is whatever she saved */
-const ownerBox = document.getElementById("owner-box");
-document.getElementById("owner-save").addEventListener("click", ()=>{
-  MEALS = parseMeals(document.getElementById("owner-meals").value);
-  state.mealprep.qty = {}; state.mealprep.cust = {};   // the old picks pointed at the old list
-  const so = MEALS.filter(d => d.soldout).length, sp = MEALS.filter(d => d.special).length;
-  document.getElementById("owner-msg").textContent = `Saved — ${MEALS.length} meal${MEALS.length===1?"":"s"} on this week's list (${sp} special${sp===1?"":"s"}, ${so} sold out). Customers see it below.`;
-  updateMealPrep();
+/* r6: Kamysha's menu manager. She edits a DRAFT copy, card by card; SAVE makes it the customer menu and keeps it
+   on this device (localStorage) so it is still there when the page reopens. Typing never re-renders the cards
+   (it would lose focus); add/remove do. */
+const MENU_KEY = "bos_mock_menu_r6";
+let seq = 0;
+const newId = () => "m" + (++seq);
+function cloneMeals(arr){
+  return arr.map(d => {
+    const id = d.id || newId(); const n = parseInt(String(id).replace(/\D/g, ""), 10) || 0; if(n > seq) seq = n;
+    return {id, name:String(d.name || ""), price:Math.max(0, +d.price || 0), special:!!d.special, vegan:!!d.vegan, soldout:!!d.soldout, ex:!!d.ex, desc:String(d.desc || ""),
+      options:(Array.isArray(d.options) ? d.options : []).map(o => ({label:String(o.label || ""), choices:(Array.isArray(o.choices) ? o.choices : []).map(String)}))};
+  });
+}
+function loadMenu(){
+  try{ const v = JSON.parse(localStorage.getItem(MENU_KEY)); if(Array.isArray(v)) return cloneMeals(v); }catch(e){}
+  return cloneMeals(SEED);
+}
+let DRAFT = [];
+const draftOf = id => DRAFT.find(d => d.id === id);
+function renderOwner(){
+  document.getElementById("owner-list").innerHTML = DRAFT.map(d => `<div class="om" data-om="${d.id}">
+    ${d.ex ? '<span class="om-ex">EXAMPLE - replace with your own</span>' : ""}
+    <div class="om-top">
+      <input type="text" data-of="${d.id}|name" value="${esc(d.name)}" placeholder="Meal name" aria-label="Meal name">
+      <input type="number" data-of="${d.id}|price" value="${d.price}" min="0" step="1" placeholder="$" aria-label="Price">
+      <button type="button" class="om-x" data-orm="${d.id}">remove</button>
+    </div>
+    <input type="text" data-of="${d.id}|desc" value="${esc(d.desc)}" placeholder="What's in it" aria-label="What's in it">
+    <div class="om-flags">
+      <label><input type="checkbox" data-of="${d.id}|special"${d.special ? " checked" : ""}> Special</label>
+      <label><input type="checkbox" data-of="${d.id}|vegan"${d.vegan ? " checked" : ""}> Vegan</label>
+      <label><input type="checkbox" data-of="${d.id}|soldout"${d.soldout ? " checked" : ""}> Sold out this week</label>
+    </div>
+    <div class="om-opts"><span class="ol">Choices customers can pick</span>
+      ${d.options.map((o, i) => `<div class="om-opt">
+        <input type="text" data-oof="${d.id}|${i}|label" value="${esc(o.label)}" placeholder="Sides" aria-label="Choice name">
+        <input type="text" data-oof="${d.id}|${i}|choices" value="${esc(o.choices.join(", "))}" placeholder="baked mac, greens, rice n' peas" aria-label="The choices, separated by commas">
+        <button type="button" class="om-x" data-oorm="${d.id}|${i}" aria-label="Remove this choice">&times;</button>
+      </div>`).join("")}
+      <button type="button" class="om-add" data-oadd="${d.id}">+ add a choice</button>
+    </div>
+  </div>`).join("") || `<p class="owner-s" style="margin-top:12px">No meals yet - press ADD A MEAL.</p>`;
+}
+const touched = (d, el) => { d.ex = false; const chip = el.closest(".om").querySelector(".om-ex"); if(chip) chip.remove(); };
+document.getElementById("owner-list").addEventListener("input", e=>{
+  const t = e.target;
+  if(t.dataset.of){
+    const [id, f] = t.dataset.of.split("|"); const d = draftOf(id); if(!d) return;
+    if(t.type === "checkbox") d[f] = t.checked;
+    else if(f === "price") d.price = Math.max(0, parseFloat(t.value) || 0);
+    else d[f] = t.value;
+    touched(d, t); return;
+  }
+  if(t.dataset.oof){
+    const [id, i, f] = t.dataset.oof.split("|"); const d = draftOf(id); const o = d && d.options[+i]; if(!o) return;
+    if(f === "label") o.label = t.value; else o.choices = t.value.split(",").map(s => s.trim()).filter(Boolean);
+    touched(d, t);
+  }
 });
+document.getElementById("owner-list").addEventListener("click", e=>{
+  const b = e.target.closest("button"); if(!b) return;
+  if(b.dataset.orm){ DRAFT = DRAFT.filter(d => d.id !== b.dataset.orm); renderOwner(); }
+  else if(b.dataset.oadd){ const d = draftOf(b.dataset.oadd); if(d){ d.options.push({label:"", choices:[]}); d.ex = false; renderOwner(); } }
+  else if(b.dataset.oorm){ const [id, i] = b.dataset.oorm.split("|"); const d = draftOf(id); if(d){ d.options.splice(+i, 1); d.ex = false; renderOwner(); } }
+});
+document.getElementById("owner-add").addEventListener("click", ()=>{
+  DRAFT.push({id:newId(), name:"", price:0, special:false, vegan:false, soldout:false, ex:false, desc:"", options:[]});
+  renderOwner();
+  const first = document.querySelector(`.om[data-om="${DRAFT[DRAFT.length-1].id}"] input`);
+  if(first){ first.scrollIntoView({block:"center"}); first.focus(); }
+});
+document.getElementById("owner-save").addEventListener("click", ()=>{
+  const blank = DRAFT.filter(d => !d.name.trim()).length;
+  const keep = DRAFT.filter(d => d.name.trim()).map(d => Object.assign({}, d, {name:d.name.trim(), desc:d.desc.trim(),
+    options:d.options.filter(o => o.label.trim() && o.choices.length).map(o => ({label:o.label.trim(), choices:o.choices}))}));
+  MEALS = cloneMeals(keep); DRAFT = cloneMeals(MEALS);
+  try{ localStorage.setItem(MENU_KEY, JSON.stringify(MEALS)); }catch(e){}
+  state.mealprep.qty = {}; state.mealprep.cust = {};   // the old picks pointed at the old menu
+  const so = MEALS.filter(d => d.soldout).length, sp = MEALS.filter(d => d.special).length;
+  document.getElementById("owner-msg").textContent = `Saved - ${MEALS.length} meal${MEALS.length===1?"":"s"} on this week's menu (${sp} special${sp===1?"":"s"}, ${so} sold out)${blank ? `; ${blank} with no name left off` : ""}. Customers see it below.`;
+  renderOwner(); updateMealPrep();
+});
+document.getElementById("owner-reset").addEventListener("click", ()=>{
+  if(!confirm("Put the starting menu back? The menu saved on this device will be replaced.")) return;
+  try{ localStorage.removeItem(MENU_KEY); }catch(e){}
+  DRAFT = cloneMeals(SEED); renderOwner();
+  document.getElementById("owner-msg").textContent = "The starting menu is back - press SAVE to post it.";
+});
+const ownerBox = document.getElementById("owner-box");
 document.getElementById("owner-toggle").addEventListener("click", e=>{
   const hidden = ownerBox.classList.toggle("hidden");
   e.target.textContent = hidden ? "show" : "hide";
   e.target.setAttribute("aria-expanded", String(!hidden));
 });
 
-MEALS = parseMeals(document.getElementById("owner-meals").value);
+MEALS = loadMenu(); DRAFT = cloneMeals(MEALS);
+renderOwner();
 updateCatering();
 updateMealPrep();
 </script>
